@@ -1,0 +1,56 @@
+version: 2
+jobs:
+
+  release_android:
+    docker:
+      - image: openchs/react-native:latest
+        environment:
+          - TERM: dumb
+          - GRADLE_OPTS: "-Xmx250m -Xms250m"
+
+    working_directory: ~/italia-app
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "android/app/build.gradle" }}
+          - v1-dependencies-
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "yarn.json" }}
+
+      - run: sudo chmod a+x android/gradlew
+
+      - run: make deps;
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+           - node_modules
+
+      - run: make release-android
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "android/app/build.gradle" }}
+          paths:
+           - ~/.gradle
+           - ~/.m2
+           - ~/italia-app/android/app/.gradle
+           - ~/italia-app/android/.gradle
+
+      - store_artifacts:
+          path: android/app/build/outputs/apk/app-release.apk
+          destination: openchs.apk
+
+      - store_artifacts:
+          path: android/app/build/generated/sourcemap.js
+          destination: sourcemap.js
+
+workflows:
+  version: 2
+  test_all:
+    jobs:
+      - release_android

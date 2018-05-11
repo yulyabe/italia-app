@@ -6,6 +6,11 @@
     },
     "app":  {
       "version": "Version"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "continue": "Continue"
     }
   },
   "connection": {

@@ -6,6 +6,11 @@
     },
     "app":  {
       "version": "Versione"
+    },
+    "buttons": {
+      "cancel": "Annulla",
+      "delete": "Cancella",
+      "continue": "Continua"
     }
   },
   "connection": {

@@ -60,7 +60,8 @@ export default class CreditCardComponent extends React.Component<Props> {
                     CreditCardStyle.largeTextStyle
                   ]}
                 >
-                  {("\u25cf".repeat(4) + " ").repeat(3) + item.number.slice(-4)}
+                  {("\u25cf".repeat(4) + " ").repeat(3) +
+                    item.ccNumber.slice(-4)}
                 </Text>
               </Col>
               <Col size={1}>
@@ -105,7 +106,9 @@ export default class CreditCardComponent extends React.Component<Props> {
               <Col size={2}>
                 <Image
                   style={CreditCardStyle.issuerLogo}
-                  source={CreditCardIcons[CreditCard.getCardType(item.number)]}
+                  source={
+                    CreditCardIcons[CreditCard.getCardType(item.ccNumber)]
+                  }
                 />
               </Col>
               <Col size={1}>

@@ -173,6 +173,9 @@ export const CreditCardStyle = StyleSheet.create({
     marginTop: 10,
     height: 200
   },
+  rotatedCard: {
+    transform: [{ perspective: 850 }, { rotateX: "-30deg" }, { scale: 0.9 }]
+  },
   smallTextStyle: {
     fontSize: variables.fontSize2,
     color: "rgb(70,92,113)"

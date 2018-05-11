@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Body, Card, Icon, Text } from "native-base";
+import { ActionSheet, Body, Card, Icon, Text } from "native-base";
 import { Image } from "react-native";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
@@ -21,6 +21,30 @@ type Props = Readonly<{
  * Credit card component
  */
 export default class CreditCardComponent extends React.Component<Props> {
+  private showMenu() {
+    const options = [
+      I18n.t("global.buttons.delete"),
+      I18n.t("global.buttons.cancel")
+    ];
+    const CANCEL_INDEX = options.indexOf(I18n.t("global.buttons.cancel"));
+    const DELETE_INDEX = options.indexOf(I18n.t("global.buttons.delete"));
+
+    ActionSheet.show(
+      {
+        options: options,
+        cancelButtonIndex: CANCEL_INDEX,
+        destructiveButtonIndex: DELETE_INDEX,
+        title: I18n.t("creditCardComponent.actions")
+      },
+      buttonIndex => {
+        switch(buttonIndex) {
+          case DELETE_INDEX:
+            // delete card
+            break;
+        }
+      }
+    );
+  }
   public render(): React.ReactNode {
     const { item } = this.props;
     const { navigate } = this.props.navigation;
@@ -53,6 +77,7 @@ export default class CreditCardComponent extends React.Component<Props> {
                   active={true}
                   style={CreditCardStyle.iconStyle}
                   name="more-vert"
+                  onPress = {() => this.showMenu()}
                 />
               </Col>
             </Row>
@@ -64,7 +89,7 @@ export default class CreditCardComponent extends React.Component<Props> {
                     CreditCardStyle.smallTextStyle
                   ]}
                 >
-                  {I18n.t("creditCardComponent.validUntil") + item.expires}
+                  {`${I18n.t("creditCardComponent.validUntil")} ${item.expires}`}
                 </Text>
               </Col>
             </Row>

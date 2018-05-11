@@ -197,6 +197,7 @@
     "favoriteText":"Al prossimo pagamento ti verrà automaticamente proposto questo metodo di pagamento"
   },
   "creditCardComponent": {
-    "validUntil": "Valida fino al "
+    "validUntil": "Valida fino al",
+    "actions": "Azioni"
   }
 }

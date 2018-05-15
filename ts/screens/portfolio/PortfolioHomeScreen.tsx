@@ -15,6 +15,7 @@ import {
 import { PortfolioStyles } from "../../components/styles";
 import I18n from "../../i18n";
 import ROUTES from "../../navigation/routes";
+import { CreditCard } from "../../types/portfolio/CreditCard";
 import { Operation } from "../../types/portfolio/types";
 
 type ScreenProps = {};
@@ -38,38 +39,46 @@ export class PortfolioHomeScreen extends React.Component<Props, never> {
     super(props);
   }
 
-  private touchableContent(): React.ReactElement<any> {
+  private getCardsSummaryImage(): React.ReactElement<any> {
     const { navigate } = this.props.navigation;
-    if (PortfolioAPI.getCreditCards().length > 0) {
-      return (
-        <View style={PortfolioStyles.container}>
-          <TouchableHighlight
-            onPress={(): boolean => navigate(ROUTES.PORTFOLIO_CREDITCARDS)}
-          >
-            <Image
-              style={PortfolioStyles.pfcards}
-              source={require("../../../img/portfolio/creditcards.jpg")}
-            />
-          </TouchableHighlight>
-        </View>
-      );
+    return (
+      <View style={PortfolioStyles.container}>
+        <TouchableHighlight
+          onPress={(): boolean => navigate(ROUTES.PORTFOLIO_CREDITCARDS)}
+        >
+          <Image
+            style={PortfolioStyles.pfcards}
+            source={require("../../../img/portfolio/creditcards.jpg")}
+          />
+        </TouchableHighlight>
+      </View>
+    );
+  }
+
+  private getEmptyCardsSummary(): React.ReactElement<any> {
+    const { navigate } = this.props.navigation;
+    return (
+      <View style={PortfolioStyles.container}>
+        <Button
+          bordered={true}
+          block={true}
+          style={PortfolioStyles.addPaymentMethodButton}
+          onPress={(): boolean => navigate(ROUTES.PORTFOLIO_ADD_PAYMENT_METHOD)}
+        >
+          <Text style={PortfolioStyles.addPaymentMethodText}>
+            {I18n.t("portfolio.newPaymentMethod.addButton")}
+          </Text>
+        </Button>
+      </View>
+    );
+  }
+
+  private touchableContent(): React.ReactElement<any> {
+    const cards: ReadonlyArray<CreditCard> = PortfolioAPI.getCreditCards();
+    if (cards.length > 0) {
+      return this.getCardsSummaryImage();
     } else {
-      return (
-        <View style={PortfolioStyles.container}>
-          <Button
-            bordered={true}
-            block={true}
-            style={PortfolioStyles.addPaymentMethodButton}
-            onPress={(): boolean =>
-              navigate(ROUTES.PORTFOLIO_ADD_PAYMENT_METHOD)
-            }
-          >
-            <Text style={PortfolioStyles.addPaymentMethodText}>
-              {I18n.t("portfolio.newPaymentMethod.addButton")}
-            </Text>
-          </Button>
-        </View>
-      );
+      return this.getEmptyCardsSummary();
     }
   }
 

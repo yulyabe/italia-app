@@ -17,6 +17,7 @@ import { CreditCard, UNKNOWN_CARD } from "../../types/portfolio/CreditCard";
 import { Operation } from "../../types/portfolio/types";
 
 import { topContentTouchable } from "../../components/portfolio/pay-layout/types";
+
 // Images
 const cardsImage = require("../../../img/portfolio/card-tab.png");
 
@@ -62,7 +63,6 @@ export class TransactionsScreen extends React.Component<Props, never> {
 
   public render(): React.ReactNode {
     const { params } = this.props.navigation.state;
-
     const card: CreditCard = params ? params.card : UNKNOWN_CARD;
     const operations: ReadonlyArray<Operation> = PortfolioAPI.getOperations(
       card.id

@@ -22,7 +22,7 @@ type Props = Readonly<{
  */
 export default class CreditCardComponent extends React.Component<Props> {
   private showMenu() {
-    const options = [
+    const options: string[] = [ // tslint:disable-line
       I18n.t("global.buttons.delete"),
       I18n.t("global.buttons.cancel")
     ];
@@ -31,13 +31,13 @@ export default class CreditCardComponent extends React.Component<Props> {
 
     ActionSheet.show(
       {
-        options: options,
+        options,
         cancelButtonIndex: CANCEL_INDEX,
         destructiveButtonIndex: DELETE_INDEX,
         title: I18n.t("creditCardComponent.actions")
       },
       buttonIndex => {
-        switch(buttonIndex) {
+        switch (buttonIndex) {
           case DELETE_INDEX:
             // delete card
             break;
@@ -78,7 +78,7 @@ export default class CreditCardComponent extends React.Component<Props> {
                   active={true}
                   style={CreditCardStyle.iconStyle}
                   name="more-vert"
-                  onPress = {() => this.showMenu()}
+                  onPress={() => this.showMenu()}
                 />
               </Col>
             </Row>
@@ -90,7 +90,9 @@ export default class CreditCardComponent extends React.Component<Props> {
                     CreditCardStyle.smallTextStyle
                   ]}
                 >
-                  {`${I18n.t("creditCardComponent.validUntil")} ${item.expires}`}
+                  {`${I18n.t("creditCardComponent.validUntil")} ${
+                    item.expires
+                  }`}
                 </Text>
               </Col>
             </Row>

@@ -2,13 +2,18 @@ import * as t from "io-ts";
 import {
   ApiHeaderJson,
   AuthorizationBearerHeaderProducer,
+  basicErrorResponseDecoder,
   basicResponseDecoder,
   BasicResponseType,
   composeHeaderProducers,
+  composeResponseDecoders,
   createFetchRequestForApi,
   IGetApiRequestType,
+  ioResponseDecoder,
   IPostApiRequestType,
-  IPutApiRequestType
+  IPutApiRequestType,
+  IResponseType,
+  ResponseDecoder
 } from "italia-ts-commons/lib/requests";
 import { NonEmptyString } from "italia-ts-commons/lib/strings";
 
@@ -40,13 +45,30 @@ const FullProfile = t.intersection([ExtendedProfile, LimitedProfile]);
 // Define the types of the requests
 //
 
+export type GetServiceRT =
+  | IResponseType<200, ServicePublic>
+  | IResponseType<401, Error>
+  | IResponseType<404, Error>
+  | IResponseType<500, Error>;
+export function getServiceResponseDecoder(): ResponseDecoder<GetServiceRT> {
+  return composeResponseDecoders(
+    composeResponseDecoders(
+      ioResponseDecoder(200, ServicePublic),
+      basicErrorResponseDecoder(401)
+    ),
+    composeResponseDecoders(
+      basicErrorResponseDecoder(404),
+      basicErrorResponseDecoder(500)
+    )
+  );
+}
 export type GetServiceT = IGetApiRequestType<
   {
     id: string;
   },
   "Authorization",
   never,
-  BasicResponseType<ServicePublic>
+  GetServiceRT
 >;
 
 export type GetMessagesT = IGetApiRequestType<
@@ -111,7 +133,7 @@ export function BackendClient(baseUrl: string, token: SessionToken) {
     url: params => `/api/v1/services/${params.id}`,
     query: _ => ({}),
     headers: tokenHeaderProducer,
-    response_decoder: basicResponseDecoder(ServicePublic)
+    response_decoder: getServiceResponseDecoder()
   };
 
   const getMessagesT: GetMessagesT = {

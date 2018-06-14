@@ -149,6 +149,20 @@
       "addButton": "Add payment method",
       "addDescription": "You can add your payment methods (e.g. credit cards, bank accounts) so that you don't have to re-add them from scratch for every transaction"
     },
+    "SecondSummary": {
+      "header": "Transaction summary",
+      "thanks":"thank you!",
+      "endPayment":"The procedure is completed",
+      "total":"Total",
+      "amount":"amount to pay",
+      "details":"Details",
+      "fee":"fee on the transaction",
+      "why":"Why?",
+      "purpose":"Reason",
+      "recipient":"Entity",
+      "date":"Date",
+      "time":"Time"
+    },
     "transactionDetails": "Transaction details",
     "total": "Total",
     "payAmount": "Amount to pay",

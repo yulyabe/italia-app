@@ -147,6 +147,20 @@
       "addButton": "Aggiungi un metodo di pagamento",
       "addDescription": "Puoi aggiungere i tuoi metodi di pagamento (carte, conti correnti, ecc.) per non doverli inserire ad ogni transazione"
     },
+    "SecondSummary": {
+      "header": "Ricevuta di pagamento",
+      "thanks":"Grazie!",
+      "endPayment":"Il tuo pagamento è concluso",
+      "total":"Totale",
+      "amount":"Importo da pagare",
+      "details":"Dettagli dell'operazione",
+      "fee":"Costo transazione",
+      "why":"Perchè?",
+      "purpose":"Causale",
+      "recipient":"Destinatario",
+      "date":"Data",
+      "time":"Ora"
+    },
     "transactionDetails": "Dettaglio delle operazioni",
     "total": "Totale",
     "payAmount": "Importo da pagare",

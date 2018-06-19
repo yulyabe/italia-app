@@ -79,7 +79,7 @@ export class SecondTransactionSummaryScreen extends React.Component<
           </Body>
         </AppHeader>
 
-        <Content original={true}>
+        <Content noPadded={true}>
           <View style={WalletStyles.backContent}>
             <Grid>
               <Col size={1} />

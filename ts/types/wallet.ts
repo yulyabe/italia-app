@@ -11,7 +11,9 @@
  * needed for UI-related purposes
  */
 export type WalletTransaction = {
+  id: number;
   cardId: number;
+  isoDatetime: string;
   date: string;
   time: string;
   paymentReason: string;
@@ -23,7 +25,9 @@ export type WalletTransaction = {
 };
 
 export const UNKNOWN_TRANSACTION: WalletTransaction = {
+  id: -1,
   cardId: -1,
+  isoDatetime: "",
   date: "",
   time: "",
   paymentReason: "UNKNOWN TRANSACTION",
@@ -38,11 +42,11 @@ export const UNKNOWN_TRANSACTION: WalletTransaction = {
  * This type represent the details of a transaction the user should display
  * after he declare to proceed with the transaction with the selected payment method.
  */
-export type AcceptedTransaction = {
+export type AcceptedTransaction = Readonly<{
   currentAmount: number;
   fee: number;
   totalAmount: number; // it should be obtained as sum of the "currrentAmount" and the "fee"
   paymentReason: string;
   entityName: string;
   date: Date;
-};
+}>;

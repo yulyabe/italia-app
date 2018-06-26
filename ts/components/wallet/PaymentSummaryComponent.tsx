@@ -9,6 +9,7 @@ import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { WalletStyles } from "../../components/styles/wallet";
 import I18n from "../../i18n";
 import variables from "../../theme/variables";
+import { Left } from 'native-base';
 
 type Props = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;
@@ -65,9 +66,11 @@ export default class PaymentSummaryComponent extends React.Component<Props> {
       <Grid style={[WalletStyles.backContent, styles.padded]}>
         <View spacer={true} large={true} />
         <Row>
-          <H3 style={WalletStyles.white}>
-            {I18n.t("wallet.firstTransactionSummary.amount")}
-          </H3>
+          <Left>
+            <H3 style={WalletStyles.white}>
+              {I18n.t("wallet.firstTransactionSummary.amount")}
+            </H3>
+          </Left>
           <Right>
             <H1
               style={
@@ -82,14 +85,16 @@ export default class PaymentSummaryComponent extends React.Component<Props> {
 
         {this.isAmountUpdated() && (
           <Row style={styles.toAlignCenter}>
-            <H3 style={WalletStyles.white}>
-              {I18n.t("wallet.firstTransactionSummary.updatedAmount")}
-            </H3>
-            <Icon
-              style={[WalletStyles.white, styles.iconMargin]}
-              name={"alert-circle"}
-              type={"Feather"}
-            />
+            <Left>
+              <H3 style={WalletStyles.white}>
+                {I18n.t("wallet.firstTransactionSummary.updatedAmount")}
+              </H3>
+              <Icon
+                style={[WalletStyles.white, styles.iconMargin]}
+                name={"alert-circle"}
+                type={"Feather"}
+              />
+            </Left>
             <Right>
               <H1 style={WalletStyles.white}>
                 {this.props.updatedAmount + "€"}

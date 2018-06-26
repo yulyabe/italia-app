@@ -14,7 +14,7 @@ import { Col, Grid, Row } from "react-native-easy-grid";
 import TransactionsList, {
   TransactionsDisplayed
 } from "../../components/wallet/TransactionsList";
-import { CardEnum, WalletLayout } from "../../components/wallet/WalletLayout";
+import WalletLayout, { CardEnum } from "../../components/wallet/WalletLayout";
 import I18n from "../../i18n";
 import ROUTES from "../../navigation/routes";
 import { fetchCardsRequest } from "../../store/actions/wallet/cards";

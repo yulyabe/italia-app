@@ -17,7 +17,7 @@ import { WalletStyles } from "../../components/styles/wallet";
 import TransactionsList, {
   TransactionsDisplayed
 } from "../../components/wallet/TransactionsList";
-import { CardEnum, WalletLayout } from "../../components/wallet/WalletLayout";
+import WalletLayout, { CardEnum } from "../../components/wallet/WalletLayout";
 import { GlobalState } from "../../store/reducers/types";
 import { selectedCreditCardSelector } from "../../store/reducers/wallet/cards";
 import { CreditCard, UNKNOWN_CARD } from "../../types/CreditCard";

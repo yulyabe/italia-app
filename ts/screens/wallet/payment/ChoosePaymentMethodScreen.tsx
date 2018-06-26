@@ -18,15 +18,15 @@ import {
 } from "native-base";
 import * as React from "react";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { WalletAPI } from "../../api/wallet/wallet-api";
-import { WalletStyles } from "../../components/styles/wallet";
-import AppHeader from "../../components/ui/AppHeader";
-import PaymentBannerComponent from "../../components/wallet/PaymentBannerComponent";
-import I18n from "../../i18n";
-import ROUTES from "../../navigation/routes";
-import Icon from "../../theme/font-icons/io-icon-font/index";
-import variables from "../../theme/variables";
-import { TransactionSummary } from "../../types/wallet";
+import { WalletAPI } from "../../../api/wallet/wallet-api";
+import { WalletStyles } from "../../../components/styles/wallet";
+import AppHeader from "../../../components/ui/AppHeader";
+import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComponent";
+import I18n from "../../../i18n";
+import ROUTES from "../../../navigation/routes";
+import Icon from "../../../theme/font-icons/io-icon-font/index";
+import variables from "../../../theme/variables";
+import { TransactionSummary } from "../../../types/wallet";
 
 type Props = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;

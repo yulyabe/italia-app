@@ -1,12 +1,12 @@
 import { StackNavigator } from "react-navigation";
 import { AddManagerToCardScreen } from "../screens/wallet/AddManagerToCardScreen";
 import { AddPaymentMethodScreen } from "../screens/wallet/AddPaymentMethodScreen";
-import { ChoosePaymentMethodScreen } from "../screens/wallet/ChoosePaymentMethodScreen";
+import { ChoosePaymentMethodScreen } from "../screens/wallet/payment/ChoosePaymentMethodScreen";
 import ConfirmSaveCardScreen from "../screens/wallet/ConfirmSaveCardScreen";
-import { ConfirmToProceedTransactionScreen } from "../screens/wallet/ConfirmToProceedTransactionScreen";
+import { ConfirmToProceedTransactionScreen } from "../screens/wallet/payment/ConfirmToProceedTransactionScreen";
 import CreditCardsScreen from "../screens/wallet/CreditCardsScreen";
-import { FirstTransactionSummaryScreen } from "../screens/wallet/FirstTransactionSummaryScreen";
-import { ManuallyIdentifyTransactionScreen } from "../screens/wallet/ManuallyIdentifyTransactionScreen";
+import FirstTransactionSummaryScreen from "../screens/wallet/payment/FirstTransactionSummaryScreen";
+import ManuallyIdentifyTransactionScreen from "../screens/wallet/payment/ManuallyIdentifyTransactionScreen";
 import { TransactionDetailsScreen } from "../screens/wallet/TransactionDetailsScreen";
 import TransactionsScreen from "../screens/wallet/TransactionsScreen";
 import WalletHomeScreen from "../screens/wallet/WalletHomeScreen";

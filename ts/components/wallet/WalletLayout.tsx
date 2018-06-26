@@ -23,6 +23,9 @@ import { WalletStyles } from "../styles/wallet";
 import AppHeader from "../ui/AppHeader";
 import CreditCardComponent from "./card";
 import { LogoPosition } from "./card/Logo";
+import { Dispatch } from '../../store/actions/types';
+import { startPayment } from '../../store/actions/wallet/payment';
+import { connect } from 'react-redux';
 
 const styles = StyleSheet.create({
   darkGrayBg: {
@@ -46,27 +49,31 @@ export enum CardEnum {
 }
 
 type FullCard = Readonly<{
-  type: CardEnum.FULL;
+  type: typeof CardEnum.FULL;
   card: CreditCard;
 }>;
 
 type HeaderCard = Readonly<{
-  type: CardEnum.HEADER;
+  type: typeof CardEnum.HEADER;
   card: CreditCard;
 }>;
 
 type FannedCards = Readonly<{
-  type: CardEnum.FAN;
+  type: typeof CardEnum.FAN;
   cards: ReadonlyArray<CreditCard>;
 }>;
 
 type NoCards = Readonly<{
-  type: CardEnum.NONE;
+  type: typeof CardEnum.NONE;
 }>;
 
 export type CardType = FullCard | HeaderCard | FannedCards | NoCards;
 
-type Props = Readonly<{
+type ReduxMappedProps = Readonly<{
+  startPayment: () => void;
+}>;
+
+type OwnProps = Readonly<{
   title: string;
   navigation: NavigationScreenProp<NavigationState>;
   headerContents?: React.ReactNode;
@@ -75,10 +82,12 @@ type Props = Readonly<{
   allowGoBack?: boolean;
 }>;
 
-export class WalletLayout extends React.Component<Props> {
+type Props = OwnProps & ReduxMappedProps;
+
+class WalletLayout extends React.Component<Props> {
   public static defaultProps = {
     headerContents: null,
-    cardType: { type: CardEnum.NONE },
+    // cardType: { type: CardEnum.NONE },
     showPayButton: true,
     allowGoBack: true
   };
@@ -180,7 +189,10 @@ export class WalletLayout extends React.Component<Props> {
         </ScrollView>
         {this.props.showPayButton && (
           <View footer={true}>
-            <Button block={true}>
+            <Button
+              block={true}
+              onPress={() => this.props.startPayment()}
+              >
               <IconFont name="io-qr" style={{ color: variables.colorWhite }} />
               <Text>{I18n.t("wallet.payNotice")}</Text>
             </Button>
@@ -190,3 +202,9 @@ export class WalletLayout extends React.Component<Props> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedProps => ({
+  startPayment: () => dispatch(startPayment())
+});
+
+export default connect(undefined, mapDispatchToProps)(WalletLayout)

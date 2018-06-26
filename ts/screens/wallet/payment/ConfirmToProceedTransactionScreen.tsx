@@ -25,12 +25,12 @@ import {
 import * as React from "react";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { WalletAPI } from "../../api/wallet/wallet-api";
-import { WalletStyles } from "../../components/styles/wallet";
-import AppHeader from "../../components/ui/AppHeader";
-import PaymentBannerComponent from "../../components/wallet/PaymentBannerComponent";
-import I18n from "../../i18n";
-import { TransactionSummary } from "../../types/wallet";
+import { WalletAPI } from "../../../api/wallet/wallet-api";
+import { WalletStyles } from "../../../components/styles/wallet";
+import AppHeader from "../../../components/ui/AppHeader";
+import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComponent";
+import I18n from "../../../i18n";
+import { TransactionSummary } from "../../../types/wallet";
 
 type Props = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;

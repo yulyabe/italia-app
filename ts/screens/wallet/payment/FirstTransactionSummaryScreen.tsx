@@ -23,22 +23,27 @@ import * as React from "react";
 import { Image, StyleSheet } from "react-native";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { WalletAPI } from "../../api/wallet/wallet-api";
-import { WalletStyles } from "../../components/styles/wallet";
-import AppHeader from "../../components/ui/AppHeader";
-import PaymentSummaryComponent from "../../components/wallet/PaymentSummaryComponent";
-import I18n from "../../i18n";
-import Icon from "../../theme/font-icons/io-icon-font/index";
-import variables from "../../theme/variables";
-import {
-  NotifiedTransaction,
-  TransactionEntity,
-  TransactionSubject
-} from "../../types/wallet";
+import { WalletStyles } from "../../../components/styles/wallet";
+import AppHeader from "../../../components/ui/AppHeader";
+import PaymentSummaryComponent from "../../../components/wallet/PaymentSummaryComponent";
+import I18n from "../../../i18n";
+import Icon from "../../../theme/font-icons/io-icon-font/index";
+import variables from "../../../theme/variables";
 
-type Props = Readonly<{
+import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet/payment';
+import { GlobalState } from '../../../store/reducers/types';
+import { connect } from 'react-redux';
+import { Option } from 'fp-ts/lib/Option';
+
+type ReduxMappedProps = Readonly<{
+  paymentData: Option<PaymentData>
+}>;
+
+type OwnProps = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;
 }>;
+
+type Props = OwnProps & ReduxMappedProps;
 
 const styles = StyleSheet.create({
   padded: {
@@ -47,17 +52,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const transactionDetails: Readonly<
-  NotifiedTransaction
-> = WalletAPI.getNotifiedTransaction();
-const entityDetails: Readonly<
-  TransactionEntity
-> = WalletAPI.getTransactionEntity();
-const subjectDetails: Readonly<
-  TransactionSubject
-> = WalletAPI.getTransactionSubject();
-
-export class FirstTransactionSummaryScreen extends React.Component<
+class FirstTransactionSummaryScreen extends React.Component<
   Props,
   never
 > {
@@ -70,6 +65,11 @@ export class FirstTransactionSummaryScreen extends React.Component<
   }
 
   public render(): React.ReactNode {
+    if (this.props.paymentData.isNone()) {
+      return <Text>ERROR</Text>;
+    }
+    const { transactionInfo, recipient, subject } = this.props.paymentData.value;
+
     return (
       <Container>
         <AppHeader>
@@ -92,13 +92,13 @@ export class FirstTransactionSummaryScreen extends React.Component<
                   {I18n.t("wallet.firstTransactionSummary.title")}
                 </H3>
                 <H1 style={WalletStyles.white}>
-                  {transactionDetails.paymentReason}
+                  {transactionInfo.paymentReason}
                 </H1>
               </Col>
               <Col size={1}>
                 <View spacer={true} large={true} />
                 <Image
-                  source={require("../../../img/wallet/icon-avviso-pagopa.png")}
+                  source={require("../../../../img/wallet/icon-avviso-pagopa.png")}
                 />
               </Col>
             </Row>
@@ -107,28 +107,32 @@ export class FirstTransactionSummaryScreen extends React.Component<
 
           <PaymentSummaryComponent
             navigation={this.props.navigation}
-            amount={transactionDetails.notifiedAmount.toString()}
-            updatedAmount={transactionDetails.currentAmount.toString()}
+            amount={transactionInfo.notifiedAmount.toString()}
+            updatedAmount={transactionInfo.currentAmount.toString()}
           />
 
           <Grid style={[styles.padded, WalletStyles.backContent]}>
             <Row>
-              <H3 style={WalletStyles.white}>
-                {I18n.t("wallet.firstTransactionSummary.expireDate")}
-              </H3>
+              <Left>
+                <H3 style={WalletStyles.white}>
+                  {I18n.t("wallet.firstTransactionSummary.expireDate")}
+                </H3>
+              </Left>
               <Right>
                 <H1 style={WalletStyles.white}>
-                  {transactionDetails.expireDate.toLocaleDateString()}
+                  {transactionInfo.expireDate.toLocaleDateString()}
                 </H1>
               </Right>
             </Row>
             <View spacer={true} />
             <Row>
-              <H3 style={WalletStyles.white}>
-                {I18n.t("wallet.firstTransactionSummary.tranche")}
-              </H3>
+              <Left>
+                <H3 style={WalletStyles.white}>
+                  {I18n.t("wallet.firstTransactionSummary.tranche")}
+                </H3>
+              </Left>
               <Right>
-                <H1 style={WalletStyles.white}>{transactionDetails.tranche}</H1>
+                <H1 style={WalletStyles.white}>{transactionInfo.tranche}</H1>
               </Right>
             </Row>
             <View spacer={true} large={true} />
@@ -142,33 +146,33 @@ export class FirstTransactionSummaryScreen extends React.Component<
               </Text>
             </Row>
             <Row>
-              <Text>{entityDetails.name}</Text>
+              <Text>{recipient.name}</Text>
             </Row>
             <Row>
-              <Text>{entityDetails.address}</Text>
+              <Text>{recipient.address}</Text>
             </Row>
             <Row>
-              <Text>{entityDetails.city}</Text>
+              <Text>{recipient.city}</Text>
             </Row>
             <Row>
               <Text>{I18n.t("wallet.firstTransactionSummary.info")}</Text>
             </Row>
             <Row>
               <Text>{I18n.t("wallet.firstTransactionSummary.tel") + " "}</Text>
-              <Text link={true}>{entityDetails.tel}</Text>
+              <Text link={true}>{recipient.tel}</Text>
             </Row>
             <Row>
-              <Text link={true}>{entityDetails.webpage}</Text>
+              <Text link={true}>{recipient.webpage}</Text>
             </Row>
             <Row>
               <Text>
                 {I18n.t("wallet.firstTransactionSummary.email") + " "}
               </Text>
-              <Text link={true}>{entityDetails.email}</Text>
+              <Text link={true}>{recipient.email}</Text>
             </Row>
             <Row>
               <Text>{I18n.t("wallet.firstTransactionSummary.PEC") + " "}}</Text>
-              <Text link={true}>{entityDetails.pec}</Text>
+              <Text link={true}>{recipient.pec}</Text>
             </Row>
             <View spacer={true} large={true} />
             <Row>
@@ -177,10 +181,10 @@ export class FirstTransactionSummaryScreen extends React.Component<
               </Text>
             </Row>
             <Row>
-              <Text>{subjectDetails.name}</Text>
+              <Text>{subject.name}</Text>
             </Row>
             <Row>
-              <Text>{subjectDetails.address}</Text>
+              <Text>{subject.address}</Text>
             </Row>
             <View spacer={true} large={true} />
             <Row>
@@ -189,26 +193,26 @@ export class FirstTransactionSummaryScreen extends React.Component<
               </Text>
             </Row>
             <Row>
-              <Text>{transactionDetails.paymentReason}</Text>
+              <Text>{transactionInfo.paymentReason}</Text>
             </Row>
             <View spacer={true} large={true} />
             <Row>
               <Text bold={true}>
                 {I18n.t("wallet.firstTransactionSummary.cbillCode") + " "}
               </Text>
-              <Text bold={true}>{transactionDetails.cbill}</Text>
+              <Text bold={true}>{transactionInfo.cbill}</Text>
             </Row>
             <Row>
               <Text bold={true}>
                 {I18n.t("wallet.firstTransactionSummary.iuv") + " "}
               </Text>
-              <Text bold={true}>{transactionDetails.iuv}</Text>
+              <Text bold={true}>{transactionInfo.iuv}</Text>
             </Row>
             <Row>
               <Text bold={true}>
                 {I18n.t("wallet.firstTransactionSummary.entityCode2") + " "}
               </Text>
-              <Text bold={true}>{entityDetails.code}</Text>
+              <Text bold={true}>{recipient.code}</Text>
             </Row>
             <View spacer={true} extralarge={true} />
           </Grid>
@@ -225,3 +229,9 @@ export class FirstTransactionSummaryScreen extends React.Component<
     );
   }
 }
+
+const mapStateToProps = (state: GlobalState): ReduxMappedProps => ({
+  paymentData: paymentDataSelector(state)
+});
+
+export default connect(mapStateToProps)(FirstTransactionSummaryScreen);

@@ -8,7 +8,7 @@
  *    https://www.pivotaltracker.com/n/projects/2048617/stories/157874540
  */
 
-import { none, Option, some } from "fp-ts/lib/Option";
+import { none, some } from "fp-ts/lib/Option";
 import {
   Body,
   Button,
@@ -26,30 +26,37 @@ import {
 } from "native-base";
 import * as React from "react";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import AppHeader from "../../components/ui/AppHeader";
-import I18n from "../../i18n";
-import ROUTES from "../../navigation/routes";
+import AppHeader from "../../../components/ui/AppHeader";
+import I18n from "../../../i18n";
+import * as t from "io-ts";
 
-type Props = Readonly<{
+import { Dispatch } from '../../../store/actions/types';
+import { PaymentIdentifier, NoticeNumber, AuthorityId } from '../../../store/reducers/wallet/payment';
+import { transactionDataEntered } from '../../../store/actions/wallet/payment';
+import { connect } from 'react-redux';
+
+type ReduxMappedProps = Readonly<{
+  transactionDataEntered: (payment: PaymentIdentifier) => void;
+}>;
+
+type OwnProps = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;
 }>;
 
-type State = Readonly<{
-  transactionCode: Option<string>;
-  fiscalCode: Option<string>;
-  amount: Option<string>;
-}>;
+type Props = OwnProps & ReduxMappedProps;
 
-export class ManuallyIdentifyTransactionScreen extends React.Component<
+type State = PaymentIdentifier;
+
+class ManuallyIdentifyTransactionScreen extends React.Component<
   Props,
   State
 > {
   constructor(props: Props) {
     super(props);
     this.state = {
-      transactionCode: none,
-      fiscalCode: none,
-      amount: none
+      noticeNumber: none,
+      authorityId: none,
+      originalAmount: none
     };
   }
 
@@ -80,7 +87,10 @@ export class ManuallyIdentifyTransactionScreen extends React.Component<
               <Input
                 keyboardType={"numeric"}
                 onChangeText={value => {
-                  this.setState({ transactionCode: some(value) });
+                  const noticeNumber = NoticeNumber.decode(value);
+                  if (noticeNumber.isRight()) {
+                      this.setState({ noticeNumber: some(noticeNumber.value) });
+                  }
                 }}
               />
             </Item>
@@ -89,23 +99,35 @@ export class ManuallyIdentifyTransactionScreen extends React.Component<
               <Input
                 keyboardType={"numeric"}
                 onChangeText={value => {
-                  this.setState({ fiscalCode: some(value) });
+                  const authorityId = AuthorityId.decode(value);
+                  if (authorityId.isRight()) {
+                    this.setState({ authorityId: some(authorityId.value) });
+                  }
                 }}
-              />
+                />
             </Item>
             <Item floatingLabel={true}>
               <Label>{I18n.t("wallet.insertManually.amount")}</Label>
               <Input
                 keyboardType={"numeric"}
                 onChangeText={value => {
-                  this.setState({ amount: some(value) });
+                  const originalAmount = t.number.decode(parseInt(value));
+                  if (originalAmount.isRight() && originalAmount.value !== 0) {
+                    this.setState({ originalAmount: some(originalAmount.value) });
+                  }
+                  else {
+                    console.warn(originalAmount);
+                  }
                 }}
               />
             </Item>
           </Form>
         </Content>
         <View footer={true}>
-          <Button block={true} primary={true}>
+          <Button
+            block={true}
+            primary={true}
+            onPress={() => this.props.transactionDataEntered(this.state)}>
             <Text>{I18n.t("wallet.insertManually.proceed")}</Text>
           </Button>
           <View spacer={true} />
@@ -113,7 +135,6 @@ export class ManuallyIdentifyTransactionScreen extends React.Component<
             block={true}
             light={true}
             bordered={true}
-            onPress={() => this.props.navigation.navigate(ROUTES.WALLET_HOME)}
           >
             <Text>{I18n.t("wallet.cancel")}</Text>
           </Button>
@@ -122,3 +143,9 @@ export class ManuallyIdentifyTransactionScreen extends React.Component<
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedProps => ({
+  transactionDataEntered: (payment: PaymentIdentifier) => dispatch(transactionDataEntered(payment))
+});
+
+export default connect(undefined, mapDispatchToProps)(ManuallyIdentifyTransactionScreen);

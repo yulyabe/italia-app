@@ -19,7 +19,7 @@ import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { WalletStyles } from "../../components/styles/wallet";
-import { CardEnum, WalletLayout } from "../../components/wallet/WalletLayout";
+import WalletLayout, { CardEnum } from "../../components/wallet/WalletLayout";
 import I18n from "../../i18n";
 import { GlobalState } from "../../store/reducers/types";
 import { selectedCreditCardSelector } from "../../store/reducers/wallet/cards";

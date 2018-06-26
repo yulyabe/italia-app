@@ -32,18 +32,23 @@ import variables from "../../../theme/variables";
 
 import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet/payment';
 import { GlobalState } from '../../../store/reducers/types';
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 import { Option } from 'fp-ts/lib/Option';
+import { proceedWithPayment } from '../../../store/actions/wallet/payment';
 
-type ReduxMappedProps = Readonly<{
+type ReduxMappedStateProps = Readonly<{
   paymentData: Option<PaymentData>
+}>;
+
+type ReduxMappedDispatchProps = Readonly<{
+  proceedWithPayment: () => void;
 }>;
 
 type OwnProps = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;
 }>;
 
-type Props = OwnProps & ReduxMappedProps;
+type Props = OwnProps & ReduxMappedStateProps & ReduxMappedDispatchProps;
 
 const styles = StyleSheet.create({
   padded: {
@@ -218,7 +223,10 @@ class FirstTransactionSummaryScreen extends React.Component<
           </Grid>
         </Content>
         <View footer={true}>
-          <Button block={true} primary={true}>
+          <Button
+            block={true}
+            primary={true}
+            onPress={() => this.props.proceedWithPayment()}>
             <Text>{I18n.t("wallet.continue")}</Text>
           </Button>
           <Button block={true} light={true} onPress={(): void => this.goBack()}>
@@ -230,8 +238,12 @@ class FirstTransactionSummaryScreen extends React.Component<
   }
 }
 
-const mapStateToProps = (state: GlobalState): ReduxMappedProps => ({
+const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
   paymentData: paymentDataSelector(state)
 });
 
-export default connect(mapStateToProps)(FirstTransactionSummaryScreen);
+const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
+  proceedWithPayment: () => dispatch(proceedWithPayment())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FirstTransactionSummaryScreen);

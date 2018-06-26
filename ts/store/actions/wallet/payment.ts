@@ -2,7 +2,8 @@ import {
   START_PAYMENT,
   TRANSACTION_DATA_ENTERED,
   STORE_TRANSACTION_DATA,
-  TRANSACTION_DATA_FETCHED
+  TRANSACTION_DATA_FETCHED,
+  PROCEED_WITH_PAYMENT
 } from "../constants";
 import { PaymentIdentifier, PaymentData } from "../../reducers/wallet/payment";
 
@@ -25,11 +26,16 @@ export type TransactionDataFetched = Readonly<{
   payload: PaymentData;
 }>;
 
+export type ProceedWithPayment = Readonly<{
+  type: typeof PROCEED_WITH_PAYMENT;
+}>;
+
 export type PaymentActions =
   | StartPayment
   | TransactionDataEntered
   | StoreTransactionData
-  | TransactionDataFetched;
+  | TransactionDataFetched
+  | ProceedWithPayment;
 
 export const startPayment = (): StartPayment => ({
   type: START_PAYMENT
@@ -54,4 +60,8 @@ export const transactionDataFetched = (
 ): TransactionDataFetched => ({
   type: TRANSACTION_DATA_FETCHED,
   payload: paymentData
+});
+
+export const proceedWithPayment = (): ProceedWithPayment => ({
+  type: PROCEED_WITH_PAYMENT
 });

@@ -47,12 +47,14 @@ class CreditCardsScreen extends React.Component<Props, never> {
         <Content style={WalletStyles.backContent}>
           <List
             removeClippedSubviews={false}
-            dataArray={this.props.cards as any[]} // tslint:disable-line
+            dataArray={this.props.cards as any[]} // tslint:disable-linezz
             renderRow={(item): React.ReactElement<any> => (
-              <CreditCardComponent
-                navigation={this.props.navigation}
-                item={item}
-              />
+                
+                <CreditCardComponent
+                  navigation={this.props.navigation}
+                  item={item}
+                />
+              
             )}
           />
           <View spacer={true} />

@@ -185,7 +185,8 @@
       "totalAmount":"Total amount",
       "info":"Warning: after this step it will not be possible to come back",
       "info2":"You are using your favourite payment method.",
-      "changeMethod":"Change the payment method"
+      "changeMethod":"Change the payment method",
+      "change":"Change method"
     },
     "payWith": {
       "header":"Choose payment method",
@@ -277,7 +278,12 @@
     },
     "acceptedCards": "Accepted cards",
     "whyFee": "Why a fee?",
-    "chooseMethod":"Select the desired method"
+    "chooseMethod":"Select the desired method",
+    "QRtoPay": {
+      "byCameraTitle": "Notice QR Code",
+      "cameraUsageInfo":"Capture the QR Code on the payment notice with the camera, or manually insert the transaction-related data (IUV and the entity/company code).",
+      "setManually":"Insert data manually"
+    }
   },
   "saveCard": {
     "saveCard":"Save the card",
@@ -306,6 +312,19 @@
     "contentTitle": "Messages",
     "loading": "Loading Messages...",
     "yesterday": "yesterday"
+  },
+  "messageDetails": {
+    "headerTitle": "Message",
+    "detailsLink": {
+      "showLabel": "Details of the message",
+      "hideLabel": "Close details"
+    },
+    "infoLabels": {
+      "data": "Data:",
+      "senderFrom": "Sender from",
+      "department": "Department",
+      "service": "Service"
+    }
   },
   "notifications": {
     "installation": {

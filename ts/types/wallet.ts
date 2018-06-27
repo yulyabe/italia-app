@@ -22,6 +22,7 @@ export type NotifiedTransaction = Readonly<{
   paymentReason: string; // also in WalletTransaction
   cbill: string;
   iuv: string;
+  transactionCost:number;
 }>;
 
 export type TransactionEntity = Readonly<{

@@ -27,8 +27,8 @@ export type PaymentIdentifier = Readonly<{
 
 export type PaymentData = Readonly<{
   transactionInfo: NotifiedTransaction;
-  recipient: TransactionEntity;
-  subject: TransactionSubject;
+  entity: TransactionEntity;
+  recipient: TransactionSubject;
 }>;
 
 export type PaymentState = Readonly<{

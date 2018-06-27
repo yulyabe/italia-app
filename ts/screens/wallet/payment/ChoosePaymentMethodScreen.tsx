@@ -1,8 +1,6 @@
 /**
  * This screen allows the user to select the payment method for a selected transaction
  * TODO:
- *  - integrate credit card component
- *   https://www.pivotaltracker.com/n/projects/2048617/stories/157422715
  *  - implement the proper navigation
  *    https://www.pivotaltracker.com/n/projects/2048617/stories/158395136
  */
@@ -13,41 +11,62 @@ import {
   Content,
   H1,
   Left,
+  List,
   Text,
   View
 } from "native-base";
 import * as React from "react";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { WalletAPI } from "../../../api/wallet/wallet-api";
 import { WalletStyles } from "../../../components/styles/wallet";
 import AppHeader from "../../../components/ui/AppHeader";
 import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComponent";
 import I18n from "../../../i18n";
 import ROUTES from "../../../navigation/routes";
-import Icon from "../../../theme/font-icons/io-icon-font/index";
-import variables from "../../../theme/variables";
-import { TransactionSummary } from "../../../types/wallet";
+import IconFont from "../../../components/ui/IconFont";
+import CreditCardComponent from "../../../components/wallet/card";
+import { GlobalState } from "../../../store/reducers/types";
+import { creditCardsSelector } from "../../../store/reducers/wallet/cards";
+import { CreditCard } from "../../../types/CreditCard";
+import { connect } from 'react-redux';
+import { Option } from 'fp-ts/lib/Option';
+import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet/payment';
+import { Dispatch } from 'redux';
+import { setCardForTransaction } from '../../../store/actions/wallet/cards';
+import { TouchableOpacity } from 'react-native';
 
-type Props = Readonly<{
+type ReduxMappedStateProps = Readonly<{
+  cards: ReadonlyArray<CreditCard>;
+  paymentData: Option<PaymentData>
+}>;
+
+type ReduxMappedDispatchProps = Readonly<{
+  CardForTransactionSelected: (selectedCard: CreditCard) => void;
+}>;
+
+type OwnProps = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;
 }>;
 
-const transaction: Readonly<
-  TransactionSummary
-> = WalletAPI.getTransactionSummary();
+type Props = OwnProps & ReduxMappedStateProps & ReduxMappedDispatchProps;
 
-export class ChoosePaymentMethodScreen extends React.Component<Props, never> {
+class ChoosePaymentMethodScreen extends React.Component<Props, never> {
   private goBack() {
     this.props.navigation.goBack();
   }
-
+  
   public render(): React.ReactNode {
+    if (this.props.paymentData.isNone()) {
+      return <Text>ERROR</Text>;
+    }
+
+    const { transactionInfo, entity } = this.props.paymentData.value;
+
     return (
       <Container>
         <AppHeader>
           <Left>
             <Button transparent={true} onPress={() => this.goBack()}>
-              <Icon name="io-back" size={variables.iconSize1} />
+              <IconFont name="io-back" />
             </Button>
           </Left>
           <Body>
@@ -57,9 +76,9 @@ export class ChoosePaymentMethodScreen extends React.Component<Props, never> {
         <Content noPadded={true}>
           <PaymentBannerComponent
             navigation={this.props.navigation}
-            paymentReason={transaction.paymentReason}
-            currentAmount={transaction.totalAmount.toString()}
-            entity={transaction.entityName}
+            paymentReason={transactionInfo.paymentReason}
+            currentAmount={transactionInfo.currentAmount.toFixed(2).toString()}
+            entity={entity.name}
           />
 
           <View style={WalletStyles.paddedLR}>
@@ -68,7 +87,21 @@ export class ChoosePaymentMethodScreen extends React.Component<Props, never> {
             <View spacer={true} />
             <Text> {I18n.t("wallet.payWith.info")}</Text>
             <View spacer={true} />
-            <Text> IMPLEMENT THE LIST OF AVAILABLE CARDS </Text>
+            <List
+              removeClippedSubviews={false}
+              dataArray={this.props.cards as any[]} // tslint:disable-line: readonly-array
+              renderRow={(item): React.ReactElement<any> => (
+                <TouchableOpacity
+                  onPress={() => this.props.CardForTransactionSelected(item)}>  
+                    <CreditCardComponent
+                      navigation={this.props.navigation}
+                      item={item}
+                      menu={false}
+                      favorite={false}
+                      lastUsage={false}
+                    />
+                  </TouchableOpacity>
+              )}
             />
           </View>
         </Content>
@@ -87,10 +120,21 @@ export class ChoosePaymentMethodScreen extends React.Component<Props, never> {
             cancel={true}
             onPress={(): boolean => this.props.navigation.goBack()}
           >
-            <Text>{I18n.t("wallet.cancel")}</Text>
+            <Text>{I18n.t("global.buttons.cancel")}</Text>
           </Button>
         </View>
       </Container>
     );
   }
 }
+
+const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
+  cards: creditCardsSelector(state),
+  paymentData: paymentDataSelector(state)
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
+  CardForTransactionSelected: (selectedCard: CreditCard) => dispatch(setCardForTransaction(selectedCard))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChoosePaymentMethodScreen);

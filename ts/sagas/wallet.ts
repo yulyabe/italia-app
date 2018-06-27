@@ -68,7 +68,7 @@ function* handlePaymentMethodSelection(
       // navigate to the list of available cards in the user wallet
       yield put(
         NavigationActions.navigate({
-          routeName: ROUTES.WALLET_CONFIRM_TO_PROCEED //WALLET_PAY_WITH it giv error!!!
+          routeName: ROUTES.WALLET_PAY_WITH
         })
       );
       break;
@@ -116,9 +116,10 @@ function* paymentSaga(): Iterator<Effect> {
       tranche: "unica",
       paymentReason: "Tari 2018",
       cbill: "A0EDT",
-      iuv: "111116000001580"
+      iuv: "111116000001580",
+      transactionCost: 0.50
     },
-    recipient: {
+    entity: {
       code: "01199250158",
       name: "Comune di Gallarate - Settore Tributi",
       address: "Via Cavour n.2 - Palazzo Broletto,21013",
@@ -128,7 +129,7 @@ function* paymentSaga(): Iterator<Effect> {
       email: "tributi@coumne.gallarate.va.it",
       pec: "protocollo@pec.comune.gallarate.va.it"
     },
-    subject: {
+    recipient: {
       name: "Mario Rossi",
       address: "Via Murillo 8, 20149 Milano (MI)"
     }
@@ -165,21 +166,17 @@ function* paymentSaga(): Iterator<Effect> {
   else {
     EventToManage = DefineWhatDisplay.SHOW_CARDS_LIST_FOR_TRANSACTION;
   }
-
   yield call(handlePaymentMethodSelection, EventToManage, CardForTransaction);
 
-
-  // the proper navigation is performed depending on the previous check
-  //yield call(handlePaymentMethodSelection, EventToManage, CardForTransaction);
-
   while (true) {
-    const action = yield take([SHOW_SELECTED_CARD_FOR_TRANSACTION, SHOW_CARDS_LIST_FOR_TRANSACTION, CONFIRM_TRANSACTION ]);
+    const action = yield take([ SHOW_SELECTED_CARD_FOR_TRANSACTION, SHOW_CARDS_LIST_FOR_TRANSACTION, CONFIRM_TRANSACTION ]);
     switch (action.type) {
       case SHOW_SELECTED_CARD_FOR_TRANSACTION: 
         EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
         CardForTransaction = action.payload;
       case SHOW_CARDS_LIST_FOR_TRANSACTION:
         EventToManage = DefineWhatDisplay.SHOW_CARDS_LIST_FOR_TRANSACTION;
+        CardForTransaction = action.payload;
       case CONFIRM_TRANSACTION:
         EventToManage = DefineWhatDisplay.CONFIRM_TRANSACTION;
     }
@@ -188,6 +185,9 @@ function* paymentSaga(): Iterator<Effect> {
       break
     }
   }
+
+  //TODO: ask to PagoPA to activate the transaction
+
 }
 
 

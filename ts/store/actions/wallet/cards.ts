@@ -22,7 +22,7 @@ export type CardSelectedForDetails = Readonly<{
 
 export type CardSelectedForTransaction = Readonly<{
   type: typeof SELECT_CARD_FOR_TRANSACTION;
-  payload: CreditCard | number; // either a card or its id
+  payload: CreditCard;
 }>;
 
 export type CardsActions =

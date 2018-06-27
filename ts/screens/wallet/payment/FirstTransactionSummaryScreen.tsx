@@ -20,7 +20,7 @@ import {
   View
 } from "native-base";
 import * as React from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { WalletStyles } from "../../../components/styles/wallet";
@@ -50,21 +50,10 @@ type OwnProps = Readonly<{
 
 type Props = OwnProps & ReduxMappedStateProps & ReduxMappedDispatchProps;
 
-const styles = StyleSheet.create({
-  padded: {
-    paddingRight: variables.contentPadding,
-    paddingLeft: variables.contentPadding
-  }
-});
-
 class FirstTransactionSummaryScreen extends React.Component<
   Props,
   never
 > {
-  constructor(props: Props) {
-    super(props);
-  }
-
   private goBack() {
     this.props.navigation.goBack();
   }
@@ -73,6 +62,7 @@ class FirstTransactionSummaryScreen extends React.Component<
     if (this.props.paymentData.isNone()) {
       return <Text>ERROR</Text>;
     }
+
     const { transactionInfo, recipient, subject } = this.props.paymentData.value;
 
     return (
@@ -89,7 +79,7 @@ class FirstTransactionSummaryScreen extends React.Component<
         </AppHeader>
 
         <Content noPadded={true}>
-          <Grid style={[styles.padded, WalletStyles.backContent]}>
+          <Grid style={[WalletStyles.paddedLR, WalletStyles.backContent]}>
             <Row>
               <Col size={5}>
                 <View spacer={true} large={true} />
@@ -116,7 +106,7 @@ class FirstTransactionSummaryScreen extends React.Component<
             updatedAmount={transactionInfo.currentAmount.toString()}
           />
 
-          <Grid style={[styles.padded, WalletStyles.backContent]}>
+          <Grid style={[WalletStyles.paddedLR, WalletStyles.backContent]}>
             <Row>
               <Left>
                 <H3 style={WalletStyles.white}>
@@ -144,7 +134,7 @@ class FirstTransactionSummaryScreen extends React.Component<
           </Grid>
 
           <View spacer={true} large={true} />
-          <Grid style={styles.padded}>
+          <Grid style={WalletStyles.paddedLR}>
             <Row>
               <Text bold={true}>
                 {I18n.t("wallet.firstTransactionSummary.entity")}
@@ -229,7 +219,8 @@ class FirstTransactionSummaryScreen extends React.Component<
             onPress={() => this.props.proceedWithPayment()}>
             <Text>{I18n.t("wallet.continue")}</Text>
           </Button>
-          <Button block={true} light={true} onPress={(): void => this.goBack()}>
+          <View spacer={true}/>
+          <Button block={true} light={true} bordered={true} onPress={(): void => this.goBack()}>
             <Text>{I18n.t("wallet.cancel")}</Text>
           </Button>
         </View>

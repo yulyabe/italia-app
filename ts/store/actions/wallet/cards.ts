@@ -2,7 +2,8 @@ import { CreditCard } from "../../../types/CreditCard";
 import {
   CARDS_FETCHED,
   FETCH_CARDS_REQUEST,
-  SELECT_CARD_FOR_DETAILS
+  SELECT_CARD_FOR_DETAILS,
+  SELECT_CARD_FOR_TRANSACTION
 } from "../constants";
 
 export type FetchCardsRequest = Readonly<{
@@ -19,10 +20,16 @@ export type CardSelectedForDetails = Readonly<{
   payload: CreditCard | number; // either a card or its id
 }>;
 
+export type CardSelectedForTransaction = Readonly<{
+  type: typeof SELECT_CARD_FOR_TRANSACTION;
+  payload: CreditCard | number; // either a card or its id
+}>;
+
 export type CardsActions =
   | FetchCardsRequest
   | CardsFetched
-  | CardSelectedForDetails;
+  | CardSelectedForDetails
+  | CardSelectedForTransaction;
 
 export const fetchCardsRequest = (): FetchCardsRequest => ({
   type: FETCH_CARDS_REQUEST
@@ -39,5 +46,12 @@ export const selectCardForDetails = (
   card: CreditCard | number
 ): CardSelectedForDetails => ({
   type: SELECT_CARD_FOR_DETAILS,
+  payload: card
+});
+
+export const setCardForTransaction = (
+  card: CreditCard
+): CardSelectedForTransaction => ({
+  type: SELECT_CARD_FOR_TRANSACTION,
   payload: card
 });

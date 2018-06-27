@@ -25,22 +25,30 @@ import {
 import * as React from "react";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { WalletAPI } from "../../../api/wallet/wallet-api";
 import { WalletStyles } from "../../../components/styles/wallet";
 import AppHeader from "../../../components/ui/AppHeader";
 import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComponent";
 import I18n from "../../../i18n";
-import { TransactionSummary } from "../../../types/wallet";
+import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet/payment';
+import { Option } from 'fp-ts/lib/Option';
+import { GlobalState } from '../../../store/reducers/types';
+import { connect } from 'react-redux';
 
-type Props = Readonly<{
+type ReduxMappedStateProps = Readonly<{
+  paymentData: Option<PaymentData>
+}>;
+
+type ReduxMappedDispatchProps = Readonly<{
+  CompletePayment: () => void;
+}>;
+
+type OwnProps = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;
 }>;
 
-const transaction: Readonly<
-  TransactionSummary
-> = WalletAPI.getTransactionSummary();
+type Props = OwnProps & ReduxMappedStateProps & ReduxMappedDispatchProps;
 
-export class ConfirmToProceedTransactionScreen extends React.Component<
+class ConfirmToProceedTransactionScreen extends React.Component<
   Props,
   never
 > {
@@ -49,6 +57,12 @@ export class ConfirmToProceedTransactionScreen extends React.Component<
   }
 
   public render(): React.ReactNode {
+    if (this.props.paymentData.isNone()) {
+      return <Text>ERROR</Text>;
+    }
+
+    const { transactionInfo } = this.props.paymentData.value; 
+
     return (
       <Container>
         <AppHeader>
@@ -65,9 +79,9 @@ export class ConfirmToProceedTransactionScreen extends React.Component<
         <Content noPadded={true}>
           <PaymentBannerComponent
             navigation={this.props.navigation}
-            paymentReason={transaction.paymentReason}
-            currentAmount={transaction.totalAmount.toString()}
-            entity={transaction.entityName}
+            paymentReason={transactionInfo.paymentReason}
+            currentAmount={transactionInfo.totalAmount.toString()}
+            entity={transactionInfo.entityName}
           />
           <View style={WalletStyles.paddedLR}>
             <View spacer={true} large={true} />
@@ -82,7 +96,7 @@ export class ConfirmToProceedTransactionScreen extends React.Component<
                 </Col>
                 <Col>
                   <Text bold={true} style={WalletStyles.textRight}>
-                    {`${transaction.currentAmount}  €`}
+                    {`${transactionInfo.currentAmount}  €`}
                   </Text>
                 </Col>
               </Row>
@@ -98,7 +112,7 @@ export class ConfirmToProceedTransactionScreen extends React.Component<
 
                 <Col size={1}>
                   <Text bold={true} style={WalletStyles.textRight}>
-                    {`${transaction.fee} €`}
+                    {`${transactionInfo.fee} €`}
                   </Text>
                 </Col>
               </Row>
@@ -111,7 +125,7 @@ export class ConfirmToProceedTransactionScreen extends React.Component<
                 <Col>
                   <View spacer={true} large={true} />
                   <H1 style={WalletStyles.textRight}>
-                    {`${transaction.totalAmount} €`}
+                    {`${transactionInfo.totalAmount} €`}
                   </H1>
                 </Col>
               </Row>
@@ -148,7 +162,7 @@ export class ConfirmToProceedTransactionScreen extends React.Component<
           <Button block={true} primary={true}>
             <Text>{I18n.t("wallet.ConfirmPayment.goToPay")}</Text>
           </Button>
-          <View spacer={true} />
+          <View spacer={true}/>
           <Button
             block={true}
             light={true}
@@ -162,3 +176,9 @@ export class ConfirmToProceedTransactionScreen extends React.Component<
     );
   }
 }
+
+const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
+  paymentData: paymentDataSelector(state)
+});
+
+export default connect(mapStateToProps)(ConfirmToProceedTransactionScreen)

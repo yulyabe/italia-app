@@ -6,7 +6,8 @@ import {
   PROCEED_WITH_PAYMENT,
   SHOW_CARDS_LIST_FOR_TRANSACTION,
   CONFIRM_TRANSACTION,
-  SHOW_SELECTED_CARD_FOR_TRANSACTION
+  SHOW_SELECTED_CARD_FOR_TRANSACTION,
+  END_PAYMENT
 } from "../constants";
 import { PaymentIdentifier, PaymentData } from "../../reducers/wallet/payment";
 
@@ -45,6 +46,10 @@ export type ConfirmTransaction = Readonly<{
   type: typeof CONFIRM_TRANSACTION;
 }>;
 
+export type EndPayment = Readonly<{
+  type: typeof END_PAYMENT;
+}>;
+
 export type PaymentActions =
   | StartPayment
   | TransactionDataEntered
@@ -53,7 +58,8 @@ export type PaymentActions =
   | ProceedWithPayment
   | ShowSelectedCardForTransaction
   | ShowCardsListForTransaction
-  | ConfirmTransaction;
+  | ConfirmTransaction
+  | EndPayment;
 
 export const startPayment = (): StartPayment => ({
   type: START_PAYMENT
@@ -94,4 +100,8 @@ export const showCardsListForTransaction = (): ShowCardsListForTransaction => ({
 
 export const confirmTransaction = (): ConfirmTransaction => ({
   type: CONFIRM_TRANSACTION
+});
+
+export const endPayment = (): EndPayment => ({
+  type: END_PAYMENT
 });

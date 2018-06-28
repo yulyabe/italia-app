@@ -14,7 +14,8 @@ import {
   CONFIRM_TRANSACTION,
   SHOW_CARDS_LIST_FOR_TRANSACTION,
   SHOW_SELECTED_CARD_FOR_TRANSACTION,
-  SELECT_CARD_FOR_TRANSACTION
+  SELECT_CARD_FOR_TRANSACTION,
+  END_PAYMENT
 } from "../store/actions/constants";
 import { cardsFetched, selectCardForTransaction } from "../store/actions/wallet/cards";
 import { transactionsFetched } from "../store/actions/wallet/transactions";
@@ -24,7 +25,8 @@ import { NavigationActions } from "react-navigation";
 import ROUTES from "../navigation/routes";
 import {
   storeTransactionData,
-  transactionDataFetched
+  transactionDataFetched,
+  startPayment
 } from "../store/actions/wallet/payment";
 import { PaymentData } from "../store/reducers/wallet/payment";
 
@@ -48,6 +50,7 @@ enum DefineWhatDisplay {
   SHOW_SELECTED_CARD_FOR_TRANSACTION, // alla transazione è associata la carta preferita
   SHOW_CARDS_LIST_FOR_TRANSACTION, // l'utente deve scegliere quale carta associare alla transazion
   SELECT_CARD_FOR_TRANSACTION,
+  END_PAYMENT,
   CONFIRM_TRANSACTION // L'utente conferma definitivamente di voler procedere alla transazione
 }
 
@@ -75,6 +78,15 @@ function* handlePaymentMethodSelection(
       );
       break;
     }
+    case DefineWhatDisplay.END_PAYMENT: {
+      // navigate to the list of available cards in the user wallet
+      yield put(
+        NavigationActions.navigate({
+          routeName: ROUTES.WALLET_HOME
+        })
+      );
+      break;
+    }
     case DefineWhatDisplay.CONFIRM_TRANSACTION: {
       // navigate to screen which ask the last confirm before proceed with the activation of the transaction.
       yield put(
@@ -82,12 +94,6 @@ function* handlePaymentMethodSelection(
           routeName: ROUTES.WALLET_TRANSACTION_DETAILS
         })
       );
-      break;
-      /** TODO: 
-       *   - once the user confirm the transaction, the PagoPA actionavtion 
-       *        of the transaction must be performed
-       *   - ensure the detail screen manage the occurence con the thank you screen
-       */
     }
   }
 }
@@ -161,7 +167,7 @@ function* paymentSaga(): Iterator<Effect> {
    */
   let EventToManage;
   let CardForTransaction: CreditCard = mockedFavoriteCard;
-
+  
   if (mockedFavoriteCard !== UNKNOWN_CARD) {
     EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
   }
@@ -169,27 +175,32 @@ function* paymentSaga(): Iterator<Effect> {
     EventToManage = DefineWhatDisplay.SHOW_CARDS_LIST_FOR_TRANSACTION;
   }
   yield call(handlePaymentMethodSelection, EventToManage, CardForTransaction);
+  
+  yield call(startPayment);
 
   while (true) {
-    const action = yield take([ SHOW_SELECTED_CARD_FOR_TRANSACTION, SHOW_CARDS_LIST_FOR_TRANSACTION, SELECT_CARD_FOR_TRANSACTION, CONFIRM_TRANSACTION ]);
+    const action = yield take([ SHOW_SELECTED_CARD_FOR_TRANSACTION, SHOW_CARDS_LIST_FOR_TRANSACTION, SELECT_CARD_FOR_TRANSACTION, END_PAYMENT, CONFIRM_TRANSACTION ]);
     switch (action.type) {
       case SHOW_SELECTED_CARD_FOR_TRANSACTION: 
         EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
         CardForTransaction = action.payload;
         break;
       case SELECT_CARD_FOR_TRANSACTION:
-        CardForTransaction = yield put(selectCardForTransaction(action.payload));
+        CardForTransaction = action.payload;
         EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
         break;
       case SHOW_CARDS_LIST_FOR_TRANSACTION:
         EventToManage = DefineWhatDisplay.SHOW_CARDS_LIST_FOR_TRANSACTION;
         break;
+      case END_PAYMENT:
+        EventToManage = DefineWhatDisplay.END_PAYMENT;
+        break;
       case CONFIRM_TRANSACTION:
         EventToManage = DefineWhatDisplay.CONFIRM_TRANSACTION;
     }
     yield call(handlePaymentMethodSelection, EventToManage, CardForTransaction);
-    if (action.type === CONFIRM_TRANSACTION) {
-      break
+    if (action.type === CONFIRM_TRANSACTION || action.type === END_PAYMENT) {
+      break;
     }
   }
 

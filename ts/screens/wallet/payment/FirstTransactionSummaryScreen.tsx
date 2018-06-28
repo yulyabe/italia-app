@@ -221,7 +221,11 @@ class FirstTransactionSummaryScreen extends React.Component<
             <Text>{I18n.t("wallet.continue")}</Text>
           </Button>
           <View spacer={true}/>
-          <Button block={true} light={true} bordered={true} onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}>
+          <Button 
+            block={true} 
+            light={true} 
+            bordered={true} 
+            onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}>
             <Text>{I18n.t("wallet.cancel")}</Text>
           </Button>
         </View>
@@ -235,7 +239,7 @@ const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
-  proceedWithPayment: () => dispatch(proceedWithPayment())
+  proceedWithPayment: () => dispatch(proceedWithPayment()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FirstTransactionSummaryScreen);

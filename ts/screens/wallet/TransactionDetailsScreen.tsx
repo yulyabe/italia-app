@@ -16,7 +16,7 @@ import * as React from "react";
 import { Content, H1, H3, Text, View, Button } from "native-base";
 import { StyleSheet } from "react-native";
 import { Col, Grid, Row } from "react-native-easy-grid";
-import { NavigationInjectedProps } from "react-navigation";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { connect } from "react-redux";
 import { WalletStyles } from "../../components/styles/wallet";
 import WalletLayout, { CardEnum } from "../../components/wallet/WalletLayout";
@@ -26,23 +26,30 @@ import { selectedCreditCardSelector } from "../../store/reducers/wallet/cards";
 import { transactionForDetailsSelector } from "../../store/reducers/wallet/transactions";
 import { CreditCard, UNKNOWN_CARD } from "../../types/CreditCard";
 import { UNKNOWN_TRANSACTION, WalletTransaction } from "../../types/wallet";
-import ROUTES from '../../navigation/routes';
 import IconFont from '../../components/ui/IconFont';
+import { PaymentData, paymentCardSelector, paymentDataSelector, paymentIsInTransactionSelector } from '../../store/reducers/wallet/payment';
+import { Option } from 'fp-ts/lib/Option';
+import { Dispatch } from 'redux';
+import { endPayment } from '../../store/actions/wallet/payment';
+import ROUTES from '../../navigation/routes';
 
-type ReduxMappedProps = Readonly<{
+type ReduxMappedStateProps = Readonly<{
   transaction: WalletTransaction;
   selectedCard: CreditCard;
+  paymentData: Option<PaymentData>;
+  paymentCard: CreditCard;
+  isInTransaction: boolean;
 }>;
 
-type Props = ReduxMappedProps & NavigationInjectedProps;
-
-/**
- * isTransactionStarted will be true when the user accepted to proceed with a transaction
- * and he is going to display the detail of the transaction as receipt
- */
-type State = Readonly<{
-  isTransactionStarted: boolean;
+type ReduxMappedDispatchProps = Readonly<{
+  EndPayment: () => void;
 }>;
+
+type OwnProps = Readonly<{
+  navigation: NavigationScreenProp<NavigationState>;
+}>;
+
+type Props =OwnProps & ReduxMappedStateProps & ReduxMappedDispatchProps;
 
 const styles = StyleSheet.create({
   value: {
@@ -62,14 +69,12 @@ const styles = StyleSheet.create({
  * TODO: implement the proper state control
  * @https://www.pivotaltracker.com/n/projects/2048617/stories/158395136
  */
-export class TransactionDetailsScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isTransactionStarted: false
-    };
-  }
-
+export class TransactionDetailsScreen extends React.Component<Props, never> {
+  
+  /**private getTransaction() {
+    return this.props.isInTransaction ?  this.props.paymentData : this.props.transaction
+  }*/
+   
   /**
    * It provide the currency EUR symbol
    * TODO: verify how approach the euro notation
@@ -99,7 +104,7 @@ export class TransactionDetailsScreen extends React.Component<Props, State> {
    * then the "Thank you message" is displayed
    */
   private getSubHeader() {
-    return this.state.isTransactionStarted ? (
+    return this.props.isInTransaction ? (
       <View>
         <Grid>
           <Col size={1} />
@@ -159,7 +164,7 @@ export class TransactionDetailsScreen extends React.Component<Props, State> {
           <Grid>
             <Row style={styles.titleRow}>
               <H3>{I18n.t("wallet.transactionDetails")}</H3>
-              <Button light={true} onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}>
+              <Button light={true} onPress={(): void => {this.props.EndPayment(); this.props.navigation.navigate(ROUTES.WALLET_HOME)}}>
                 <IconFont name="io-close"/>
               </Button>
             </Row>
@@ -207,11 +212,18 @@ export class TransactionDetailsScreen extends React.Component<Props, State> {
     );
   }
 }
-const mapStateToProps = (state: GlobalState): ReduxMappedProps => ({
+const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
   transaction: transactionForDetailsSelector(state).getOrElse(
     UNKNOWN_TRANSACTION
   ),
-  selectedCard: selectedCreditCardSelector(state).getOrElse(UNKNOWN_CARD)
+  selectedCard: selectedCreditCardSelector(state).getOrElse(UNKNOWN_CARD),
+  paymentCard: paymentCardSelector(state).getOrElse(UNKNOWN_CARD),
+  paymentData: paymentDataSelector(state),
+  isInTransaction: paymentIsInTransactionSelector(state)
 });
 
-export default connect(mapStateToProps)(TransactionDetailsScreen);
+const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
+  EndPayment: () => dispatch(endPayment())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TransactionDetailsScreen);

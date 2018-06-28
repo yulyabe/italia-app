@@ -5,7 +5,9 @@ import { Action } from "../../actions/types";
 import {
   STORE_TRANSACTION_DATA,
   TRANSACTION_DATA_FETCHED,
-  SELECT_CARD_FOR_TRANSACTION
+  SELECT_CARD_FOR_TRANSACTION,
+  START_PAYMENT,
+  END_PAYMENT
 } from "../../actions/constants";
 import {
   NotifiedTransaction,
@@ -37,12 +39,14 @@ export type PaymentState = Readonly<{
   paymentIdentifier: Option<PaymentIdentifier>;
   paymentData: Option<PaymentData>;
   paymentCard: Option<CreditCard>;
+  isInTransaction: boolean;
 }>;
 
 export const PAYMENT_INITIAL_STATE: PaymentState = {
   paymentIdentifier: none,
   paymentData: none,
-  paymentCard: none
+  paymentCard: none,
+  isInTransaction: false
 };
 
 export const paymentDataSelector = (state: GlobalState): Option<PaymentData> =>
@@ -50,6 +54,9 @@ export const paymentDataSelector = (state: GlobalState): Option<PaymentData> =>
 
 export const paymentCardSelector = (state: GlobalState): Option<CreditCard> =>
   state.wallet.payment.paymentCard;
+
+export const paymentIsInTransactionSelector = (state:GlobalState): boolean =>
+  state.wallet.payment.isInTransaction;
 
 const reducer = (
   state: PaymentState = PAYMENT_INITIAL_STATE,
@@ -73,6 +80,19 @@ const reducer = (
       paymentCard: some(action.payload)
     }
   }
+  if (action.type === START_PAYMENT) {
+    return {
+      ...state,
+      isInTransaction: true
+    }
+  }
+  if (action.type === END_PAYMENT) {
+    return{
+      ...state,
+      isInTransaction: false
+    }
+  }
+  
   return state;
 };
 

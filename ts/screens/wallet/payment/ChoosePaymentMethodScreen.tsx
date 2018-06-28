@@ -34,6 +34,7 @@ import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet
 import { Dispatch } from 'redux';
 import { TouchableOpacity } from 'react-native';
 import { selectCardForTransaction } from '../../../store/actions/wallet/cards';
+import { endPayment } from '../../../store/actions/wallet/payment';
 
 type ReduxMappedStateProps = Readonly<{
   cards: ReadonlyArray<CreditCard>;
@@ -42,6 +43,7 @@ type ReduxMappedStateProps = Readonly<{
 
 type ReduxMappedDispatchProps = Readonly<{
   CardForTransactionSelected: (selectedCard: CreditCard) => void;
+  EndPayment: () => void;
 }>;
 
 type OwnProps = Readonly<{
@@ -119,7 +121,7 @@ class ChoosePaymentMethodScreen extends React.Component<Props, never> {
           <Button
             block={true}
             cancel={true}
-            onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}
+            onPress={(): void => this.props.EndPayment()}
           >
             <Text>{I18n.t("global.buttons.cancel")}</Text>
           </Button>
@@ -135,7 +137,8 @@ const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
-  CardForTransactionSelected: (selectedCard: CreditCard) => dispatch(selectCardForTransaction(selectedCard))
+  CardForTransactionSelected: (selectedCard: CreditCard) => dispatch(selectCardForTransaction(selectedCard)),
+  EndPayment: () => dispatch(endPayment())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChoosePaymentMethodScreen);

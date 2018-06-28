@@ -29,8 +29,7 @@ import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComp
 import I18n from "../../../i18n";
 import { GlobalState } from "../../../store/reducers/types";
 import { CreditCard, UNKNOWN_CARD } from "../../../types/CreditCard";
-import { confirmTransaction, showCardsListForTransaction } from '../../../store/actions/wallet/payment';
-import ROUTES from '../../../navigation/routes';
+import { confirmTransaction, showCardsListForTransaction, endPayment } from '../../../store/actions/wallet/payment';
 
 type ReduxMappedStateProps = Readonly<{
   paymentData: Option<PaymentData>;
@@ -40,6 +39,7 @@ type ReduxMappedStateProps = Readonly<{
 type ReduxMappedDispatchProps = Readonly<{
   ConfirmTransaction: () => void;
   ChangeCard: () => void;
+  EndPayment: () => void;
 }>;
 
 type OwnProps = Readonly<{
@@ -69,8 +69,8 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
    * of the order of of higher 10^13
    *  @https://www.pivotaltracker.com/n/projects/2048617/stories/157769657
    */
-  private getTotalAmount(amount: number, transactionCost: number) {
-    return amount + transactionCost;
+  private getTotalAmount(currentAmount: number, transactionCost: number) {
+    return currentAmount + transactionCost;
   }
 
   public render(): React.ReactNode {
@@ -209,7 +209,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
               style={styles.child}
               block={true}
               cancel={true}
-              onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}
+              onPress={(): void => this.props.EndPayment()}
             >
               <Text>{I18n.t("global.buttons.cancel")}</Text>
             </Button>
@@ -227,7 +227,9 @@ const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
   ConfirmTransaction: () => dispatch(confirmTransaction()),
-  ChangeCard: () => dispatch(showCardsListForTransaction())
+  ChangeCard: () => dispatch(showCardsListForTransaction()),
+  EndPayment: () => dispatch(endPayment())
+
 });
 
 export default connect(mapStateToProps,mapDispatchToProps)(ConfirmToProceedTransactionScreen);

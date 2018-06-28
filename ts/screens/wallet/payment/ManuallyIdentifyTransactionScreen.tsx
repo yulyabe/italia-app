@@ -29,14 +29,13 @@ import { NavigationScreenProp, NavigationState } from "react-navigation";
 import AppHeader from "../../../components/ui/AppHeader";
 import I18n from "../../../i18n";
 import * as t from "io-ts";
-
 import { Dispatch } from '../../../store/actions/types';
 import { PaymentIdentifier, NoticeNumber, AuthorityId } from '../../../store/reducers/wallet/payment';
 import { transactionDataEntered } from '../../../store/actions/wallet/payment';
 import { connect } from 'react-redux';
 import ROUTES from '../../../navigation/routes';
 
-type ReduxMappedProps = Readonly<{
+type ReduxMappedDispatchProps = Readonly<{
   transactionDataEntered: (payment: PaymentIdentifier) => void;
 }>;
 
@@ -44,7 +43,7 @@ type OwnProps = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;
 }>;
 
-type Props = OwnProps & ReduxMappedProps;
+type Props = OwnProps & ReduxMappedDispatchProps;
 
 type State = PaymentIdentifier;
 
@@ -136,7 +135,7 @@ class ManuallyIdentifyTransactionScreen extends React.Component<
             block={true}
             light={true}
             bordered={true}
-            onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}
+            onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME) }
           >
             <Text>{I18n.t("wallet.cancel")}</Text>
           </Button>
@@ -146,8 +145,8 @@ class ManuallyIdentifyTransactionScreen extends React.Component<
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedProps => ({
-  transactionDataEntered: (payment: PaymentIdentifier) => dispatch(transactionDataEntered(payment))
+const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
+  transactionDataEntered: (payment: PaymentIdentifier) => dispatch(transactionDataEntered(payment)),
 });
 
 export default connect(undefined, mapDispatchToProps)(ManuallyIdentifyTransactionScreen);

@@ -15,7 +15,7 @@ import { GlobalState } from "../types";
 
 export type CardsState = Readonly<{
   cards: IndexedById<CreditCard>;
-  selectedCardId: Option<number>
+  selectedCardId: Option<number>;
 }>;
 
 export const CARDS_INITIAL_STATE: CardsState = {

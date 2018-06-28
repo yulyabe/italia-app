@@ -1,15 +1,15 @@
+import { PaymentData, PaymentIdentifier } from "../../reducers/wallet/payment";
 import {
-  START_PAYMENT,
-  TRANSACTION_DATA_ENTERED,
-  STORE_TRANSACTION_DATA,
-  TRANSACTION_DATA_FETCHED,
+  CONFIRM_TRANSACTION,
+  END_PAYMENT,
   PROCEED_WITH_PAYMENT,
   SHOW_CARDS_LIST_FOR_TRANSACTION,
-  CONFIRM_TRANSACTION,
   SHOW_SELECTED_CARD_FOR_TRANSACTION,
-  END_PAYMENT
+  START_PAYMENT,
+  STORE_TRANSACTION_DATA,
+  TRANSACTION_DATA_ENTERED,
+  TRANSACTION_DATA_FETCHED
 } from "../constants";
-import { PaymentIdentifier, PaymentData } from "../../reducers/wallet/payment";
 
 export type StartPayment = Readonly<{
   type: typeof START_PAYMENT;

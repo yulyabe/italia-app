@@ -210,7 +210,7 @@ const notifiedTransaction: Readonly<NotifiedTransaction> = {
   paymentReason: "Tari 2018",
   cbill: "A0EDT",
   iuv: "111116000001580",
-  transactionCost: 0.50
+  transactionCost: 0.5
 };
 
 const transactionEntity: Readonly<TransactionEntity> = {

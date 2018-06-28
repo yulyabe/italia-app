@@ -28,7 +28,7 @@ import {
   transactionDataFetched,
   startPayment
 } from "../store/actions/wallet/payment";
-import { PaymentData } from "../store/reducers/wallet/payment";
+import { PaymentData, PaymentIdentifier } from "../store/reducers/wallet/payment";
 
 function* fetchTransactions(
   loadTransactions: () => Promise<ReadonlyArray<WalletTransaction>>
@@ -98,6 +98,26 @@ function* handlePaymentMethodSelection(
   }
 }
 
+/** TODO: verificare cosa deve contenere il campo CodStazPA. 
+ * Se corrisponde all'application code, questo non è necessariamente presente.
+ * La presenza dovrebbe essere in funzione del valore assunto dall'AUX DIGIT 
+ * VEDI http://pagopa-docs-specattuative.readthedocs.io/it/latest/specifiche_attuative_pagamenti.html
+ * SEZIONE 8.2. Generazione del Numero Avviso e del codice IUV
+ */
+function* createJSONtoVerifyTransaction(data: PaymentIdentifier): Iterator<Effect> {
+  return { 
+    codiceIdRPT: {
+      CF: data.authorityId,
+      CodStazPA: "12",
+      AuxDigit: "0", //first digit of the number
+      CodIUV: "1234567890123"
+    },
+    datiPagamentoPSP: {
+      importoSingoloVersamento: data.originalAmount
+    }
+  }
+}
+
 function* paymentSaga(): Iterator<Effect> {
   /**
    * Display initial code(s) acquisitiion screen
@@ -114,21 +134,28 @@ function* paymentSaga(): Iterator<Effect> {
   // store data in redux state
   yield put(storeTransactionData(action.payload));
 
-  // TODO: fetch transaction data from pagopa proxy
+  // fetch transaction data from pagopa proxy
+  const dataToSend = yield call(createJSONtoVerifyTransaction, action.payload);
+
+
+  //moked data
   const mockedPaymentData: PaymentData = {
     transactionInfo: {
       noticeCode: "112324875636161",
       notifiedAmount: 198.0,
+      iuv: "111116000001580",
+
       currentAmount: 215.0,
+      paymentReason: "Tari 2018",
+
       expireDate: new Date("03/01/2018"),
       tranche: "unica",
-      paymentReason: "Tari 2018",
       cbill: "A0EDT",
-      iuv: "111116000001580",
       transactionCost: 0.50
     },
     entity: {
       code: "01199250158",
+      
       name: "Comune di Gallarate - Settore Tributi",
       address: "Via Cavour n.2 - Palazzo Broletto,21013",
       city: "Gallarate (VA)",

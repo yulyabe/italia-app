@@ -71,10 +71,49 @@ const styles = StyleSheet.create({
  */
 export class TransactionDetailsScreen extends React.Component<Props, never> {
   
-  /**private getTransaction() {
-    return this.props.isInTransaction ?  this.props.paymentData : this.props.transaction
-  }*/
-   
+  /**
+   * It maps the transaction data coming from the procedure of activate a transaction
+   * with the type used for the transaction read from the past transaction.
+   * Data not available had been mocked.
+   */
+  private getTransaction(): WalletTransaction {
+    if (!this.props.isInTransaction) {
+      return this.props.transaction;
+    } else if (this.props.paymentData.isSome()) {
+      const { paymentCard } = this.props;
+      const { transactionInfo, entity  } = this.props.paymentData.value;
+
+      let transaction: WalletTransaction = {
+        id: 0,
+        cardId: paymentCard.id,
+        isoDatetime: "13/05/2018 18:15",
+        date: "13/05/2018",
+        time: "18:15",
+        paymentReason: transactionInfo.paymentReason,
+        recipient: entity.name,
+        amount: transactionInfo.currentAmount,
+        currency: "EUR",
+        transactionCost: transactionInfo.transactionCost,
+        isNew: true
+      }
+      return transaction
+    } else {
+      return UNKNOWN_TRANSACTION
+    }
+  }  
+
+  /**
+   * It provides the proper card to display
+   */
+  private getCard()  {
+    if (!this.props.isInTransaction) {
+      return this.props.selectedCard
+    } else {
+      return this.props.paymentCard
+    }
+  } 
+
+
   /**
    * It provide the currency EUR symbol
    * TODO: verify how approach the euro notation
@@ -150,14 +189,14 @@ export class TransactionDetailsScreen extends React.Component<Props, never> {
   }
 
   public render(): React.ReactNode {
-    const { transaction } = this.props;
+    const transaction = this.getTransaction();
 
     return (
       <WalletLayout
         title={I18n.t("wallet.transaction")}
         navigation={this.props.navigation}
         headerContents={this.getSubHeader()}
-        cardType={{ type: CardEnum.HEADER, card: this.props.selectedCard }}
+        cardType={{ type: CardEnum.HEADER, card: this.getCard()}}
         showPayButton={false}
       >
         <Content scrollEnabled={false} style={WalletStyles.whiteContent}>

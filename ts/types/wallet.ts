@@ -16,12 +16,14 @@ import { ImageSource } from "react-native-vector-icons/Icon";
 export type NotifiedTransaction = Readonly<{
   noticeCode: string;
   notifiedAmount: number;
+  iuv: string;
+
   currentAmount: number; // also in WalletTransaction
+  paymentReason: string; // also in WalletTransaction
+
   expireDate: Date;
   tranche: string;
-  paymentReason: string; // also in WalletTransaction
   cbill: string;
-  iuv: string;
   transactionCost:number; // also in WalletTransaction
 }>;
 

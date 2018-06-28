@@ -209,7 +209,8 @@ const notifiedTransaction: Readonly<NotifiedTransaction> = {
   tranche: "unica",
   paymentReason: "Tari 2018",
   cbill: "A0EDT",
-  iuv: "111116000001580"
+  iuv: "111116000001580",
+  transactionCost: 0.50
 };
 
 const transactionEntity: Readonly<TransactionEntity> = {

@@ -155,7 +155,7 @@ export default class CreditCardComponent extends React.Component<Props> {
 
   public render(): React.ReactNode {
     const { item } = this.props;
-
+    console.warn(item);
     const cardStyles: ReadonlyArray<ViewStyle> = [
       styles.cardStyle,
       this.props.headerOnly

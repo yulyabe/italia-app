@@ -45,11 +45,6 @@ export type ConfirmTransaction = Readonly<{
   type: typeof CONFIRM_TRANSACTION;
 }>;
 
-export type ChangeCard = Readonly<{
-  type: typeof SHOW_CARDS_LIST_FOR_TRANSACTION
-}>;
-
-
 export type PaymentActions =
   | StartPayment
   | TransactionDataEntered
@@ -58,8 +53,7 @@ export type PaymentActions =
   | ProceedWithPayment
   | ShowSelectedCardForTransaction
   | ShowCardsListForTransaction
-  | ConfirmTransaction
-  | ChangeCard;
+  | ConfirmTransaction;
 
 export const startPayment = (): StartPayment => ({
   type: START_PAYMENT
@@ -100,8 +94,4 @@ export const showCardsListForTransaction = (): ShowCardsListForTransaction => ({
 
 export const confirmTransaction = (): ConfirmTransaction => ({
   type: CONFIRM_TRANSACTION
-});
-
-export const changeCard = (): ChangeCard => ({
-  type: SHOW_CARDS_LIST_FOR_TRANSACTION
 });

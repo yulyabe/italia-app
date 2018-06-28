@@ -34,6 +34,7 @@ import { GlobalState } from '../../../store/reducers/types';
 import { connect, Dispatch } from 'react-redux';
 import { Option } from 'fp-ts/lib/Option';
 import { proceedWithPayment } from '../../../store/actions/wallet/payment';
+import ROUTES from '../../../navigation/routes';
 
 type ReduxMappedStateProps = Readonly<{
   paymentData: Option<PaymentData>
@@ -220,7 +221,7 @@ class FirstTransactionSummaryScreen extends React.Component<
             <Text>{I18n.t("wallet.continue")}</Text>
           </Button>
           <View spacer={true}/>
-          <Button block={true} light={true} bordered={true} onPress={(): void => this.goBack()}>
+          <Button block={true} light={true} bordered={true} onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}>
             <Text>{I18n.t("wallet.cancel")}</Text>
           </Button>
         </View>

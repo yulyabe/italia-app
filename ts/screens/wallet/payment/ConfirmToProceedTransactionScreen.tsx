@@ -18,7 +18,7 @@ import * as React from "react";
 import { StyleSheet } from "react-native";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet/payment';
+import { PaymentData, paymentDataSelector, paymentCardSelector } from '../../../store/reducers/wallet/payment';
 import { Option } from 'fp-ts/lib/Option';
 import { connect, Dispatch } from "react-redux";
 import { WalletStyles } from "../../../components/styles/wallet";
@@ -28,13 +28,13 @@ import CreditCardComponent from "../../../components/wallet/card";
 import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComponent";
 import I18n from "../../../i18n";
 import { GlobalState } from "../../../store/reducers/types";
-import { selectedCreditCardSelector } from "../../../store/reducers/wallet/cards";
 import { CreditCard, UNKNOWN_CARD } from "../../../types/CreditCard";
-import { confirmTransaction, changeCard } from '../../../store/actions/wallet/payment';
+import { confirmTransaction, showCardsListForTransaction } from '../../../store/actions/wallet/payment';
+import ROUTES from '../../../navigation/routes';
 
 type ReduxMappedStateProps = Readonly<{
   paymentData: Option<PaymentData>;
-  cardSelectedForPayment: Readonly<CreditCard>;
+  paymentCard: CreditCard;
 }>;
 
 type ReduxMappedDispatchProps = Readonly<{
@@ -84,7 +84,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
       <Container>
         <AppHeader>
           <Left>
-            <Button transparent={true} onPress={() => this.goBack()}>
+            <Button transparent={true} onPress={(): void => this.goBack()}>
               <IconFont name="io-back" />
             </Button>
           </Left>
@@ -106,7 +106,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
             <View spacer={true} />
             <CreditCardComponent
               navigation={this.props.navigation}
-              item={this.props.cardSelectedForPayment}
+              item={this.props.paymentCard}
               menu={false}
               favorite={false}
               lastUsage={false}
@@ -161,7 +161,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
                   <View spacer={true} large={true} />
                   <Text style={WalletStyles.textCenter}>
                     {`${I18n.t("wallet.ConfirmPayment.info2")} `}
-                    <Text link={true}>
+                    <Text link={true} onPress={(): void => this.props.ChangeCard()}>
                       {I18n.t("wallet.ConfirmPayment.changeMethod")}
                     </Text>
                   </Text>
@@ -200,7 +200,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
               block={true}
               light={true}
               bordered={true}
-              onPress={_ => this.goBack()}
+              onPress={(): void => this.props.ChangeCard()}
             >
               <Text>{I18n.t("wallet.ConfirmPayment.change")}</Text>
             </Button>
@@ -209,7 +209,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
               style={styles.child}
               block={true}
               cancel={true}
-              onPress={_ => this.goBack()}
+              onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}
             >
               <Text>{I18n.t("global.buttons.cancel")}</Text>
             </Button>
@@ -221,13 +221,13 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
 }
 
 const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
-  cardSelectedForPayment: selectedCreditCardSelector(state).getOrElse(UNKNOWN_CARD),
+  paymentCard: paymentCardSelector(state).getOrElse(UNKNOWN_CARD),
   paymentData: paymentDataSelector(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
   ConfirmTransaction: () => dispatch(confirmTransaction()),
-  ChangeCard: () => dispatch(changeCard())
+  ChangeCard: () => dispatch(showCardsListForTransaction())
 });
 
 export default connect(mapStateToProps,mapDispatchToProps)(ConfirmToProceedTransactionScreen);

@@ -34,6 +34,7 @@ import { Dispatch } from '../../../store/actions/types';
 import { PaymentIdentifier, NoticeNumber, AuthorityId } from '../../../store/reducers/wallet/payment';
 import { transactionDataEntered } from '../../../store/actions/wallet/payment';
 import { connect } from 'react-redux';
+import ROUTES from '../../../navigation/routes';
 
 type ReduxMappedProps = Readonly<{
   transactionDataEntered: (payment: PaymentIdentifier) => void;
@@ -135,6 +136,7 @@ class ManuallyIdentifyTransactionScreen extends React.Component<
             block={true}
             light={true}
             bordered={true}
+            onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}
           >
             <Text>{I18n.t("wallet.cancel")}</Text>
           </Button>

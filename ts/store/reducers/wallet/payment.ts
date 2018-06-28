@@ -4,7 +4,8 @@ import { Option, none, some } from "fp-ts/lib/Option";
 import { Action } from "../../actions/types";
 import {
   STORE_TRANSACTION_DATA,
-  TRANSACTION_DATA_FETCHED
+  TRANSACTION_DATA_FETCHED,
+  SELECT_CARD_FOR_TRANSACTION
 } from "../../actions/constants";
 import {
   NotifiedTransaction,
@@ -12,6 +13,7 @@ import {
   TransactionSubject
 } from "../../../types/wallet";
 import { GlobalState } from "../types";
+import { CreditCard } from '../../../types/CreditCard';
 
 export const NoticeNumber = PatternString("^\\d{8,18}$");
 export type NoticeNumber = t.TypeOf<typeof NoticeNumber>;
@@ -34,15 +36,20 @@ export type PaymentData = Readonly<{
 export type PaymentState = Readonly<{
   paymentIdentifier: Option<PaymentIdentifier>;
   paymentData: Option<PaymentData>;
+  paymentCard: Option<CreditCard>;
 }>;
 
 export const PAYMENT_INITIAL_STATE: PaymentState = {
   paymentIdentifier: none,
-  paymentData: none
+  paymentData: none,
+  paymentCard: none
 };
 
 export const paymentDataSelector = (state: GlobalState): Option<PaymentData> =>
   state.wallet.payment.paymentData;
+
+export const paymentCardSelector = (state: GlobalState): Option<CreditCard> =>
+  state.wallet.payment.paymentCard;
 
 const reducer = (
   state: PaymentState = PAYMENT_INITIAL_STATE,
@@ -59,6 +66,12 @@ const reducer = (
       ...state,
       paymentData: some(action.payload)
     };
+  }
+  if (action.type === SELECT_CARD_FOR_TRANSACTION) {
+    return {
+      ...state,
+      paymentCard: some(action.payload)
+    }
   }
   return state;
 };

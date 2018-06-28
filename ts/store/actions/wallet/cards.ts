@@ -22,7 +22,7 @@ export type CardSelectedForDetails = Readonly<{
 
 export type CardSelectedForTransaction = Readonly<{
   type: typeof SELECT_CARD_FOR_TRANSACTION;
-  payload: CreditCard;
+  payload: CreditCard
 }>;
 
 export type CardsActions =
@@ -49,7 +49,7 @@ export const selectCardForDetails = (
   payload: card
 });
 
-export const setCardForTransaction = (
+export const selectCardForTransaction = (
   card: CreditCard
 ): CardSelectedForTransaction => ({
   type: SELECT_CARD_FOR_TRANSACTION,

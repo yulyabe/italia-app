@@ -13,7 +13,7 @@
  */
 import * as React from "react";
 
-import { Content, H1, H3, Text, View } from "native-base";
+import { Content, H1, H3, Text, View, Button } from "native-base";
 import { StyleSheet } from "react-native";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationInjectedProps } from "react-navigation";
@@ -24,10 +24,10 @@ import I18n from "../../i18n";
 import { GlobalState } from "../../store/reducers/types";
 import { selectedCreditCardSelector } from "../../store/reducers/wallet/cards";
 import { transactionForDetailsSelector } from "../../store/reducers/wallet/transactions";
-import Icon from "../../theme/font-icons/io-icon-font/index";
-import variables from "../../theme/variables";
 import { CreditCard, UNKNOWN_CARD } from "../../types/CreditCard";
 import { UNKNOWN_TRANSACTION, WalletTransaction } from "../../types/wallet";
+import ROUTES from '../../navigation/routes';
+import IconFont from '../../components/ui/IconFont';
 
 type ReduxMappedProps = Readonly<{
   transaction: WalletTransaction;
@@ -159,7 +159,9 @@ export class TransactionDetailsScreen extends React.Component<Props, State> {
           <Grid>
             <Row style={styles.titleRow}>
               <H3>{I18n.t("wallet.transactionDetails")}</H3>
-              <Icon name="io-close" size={variables.iconSizeBase} />
+              <Button light={true} onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}>
+                <IconFont name="io-close"/>
+              </Button>
             </Row>
             <View spacer={true} extralarge={true} />
             <Row>

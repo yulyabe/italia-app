@@ -103,7 +103,7 @@ export const CreditCard = t.union([
 export type CreditCard = t.TypeOf<typeof CreditCard>;
 
 export const UNKNOWN_CARD: CreditCard = {
-  owner: "?" as NonEmptyString,
+  owner: "Owner Test" as NonEmptyString,
   pan: "0000000000000000",
   expirationDate: "??/??" as NonEmptyString,
   id: -1,

@@ -14,8 +14,9 @@ import {
   CONFIRM_TRANSACTION,
   SHOW_CARDS_LIST_FOR_TRANSACTION,
   SHOW_SELECTED_CARD_FOR_TRANSACTION,
+  SELECT_CARD_FOR_TRANSACTION
 } from "../store/actions/constants";
-import { cardsFetched, setCardForTransaction } from "../store/actions/wallet/cards";
+import { cardsFetched, selectCardForTransaction } from "../store/actions/wallet/cards";
 import { transactionsFetched } from "../store/actions/wallet/transactions";
 import { CreditCard, UNKNOWN_CARD } from "../types/CreditCard";
 import { WalletTransaction } from "../types/wallet";
@@ -45,7 +46,8 @@ function* fetchCreditCards(
 
 enum DefineWhatDisplay {
   SHOW_SELECTED_CARD_FOR_TRANSACTION, // alla transazione è associata la carta preferita
-  SHOW_CARDS_LIST_FOR_TRANSACTION, // l'utente deve scegliere quale carta associare alla transazione
+  SHOW_CARDS_LIST_FOR_TRANSACTION, // l'utente deve scegliere quale carta associare alla transazion
+  SELECT_CARD_FOR_TRANSACTION,
   CONFIRM_TRANSACTION // L'utente conferma definitivamente di voler procedere alla transazione
 }
 
@@ -55,7 +57,7 @@ function* handlePaymentMethodSelection(
 ): Iterator<Effect> {
   switch (currentChoice) {
     case DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION: {
-      yield put(setCardForTransaction(cardforTransaction));
+      yield put(selectCardForTransaction(cardforTransaction));
       // navigate to the preview of both the card to use for the transaction and the transaction 
       yield put(
         NavigationActions.navigate({
@@ -169,14 +171,19 @@ function* paymentSaga(): Iterator<Effect> {
   yield call(handlePaymentMethodSelection, EventToManage, CardForTransaction);
 
   while (true) {
-    const action = yield take([ SHOW_SELECTED_CARD_FOR_TRANSACTION, SHOW_CARDS_LIST_FOR_TRANSACTION, CONFIRM_TRANSACTION ]);
+    const action = yield take([ SHOW_SELECTED_CARD_FOR_TRANSACTION, SHOW_CARDS_LIST_FOR_TRANSACTION, SELECT_CARD_FOR_TRANSACTION, CONFIRM_TRANSACTION ]);
     switch (action.type) {
       case SHOW_SELECTED_CARD_FOR_TRANSACTION: 
         EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
         CardForTransaction = action.payload;
+        break;
+      case SELECT_CARD_FOR_TRANSACTION:
+        CardForTransaction = yield put(selectCardForTransaction(action.payload));
+        EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
+        break;
       case SHOW_CARDS_LIST_FOR_TRANSACTION:
         EventToManage = DefineWhatDisplay.SHOW_CARDS_LIST_FOR_TRANSACTION;
-        CardForTransaction = action.payload;
+        break;
       case CONFIRM_TRANSACTION:
         EventToManage = DefineWhatDisplay.CONFIRM_TRANSACTION;
     }

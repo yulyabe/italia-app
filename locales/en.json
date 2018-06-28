@@ -153,7 +153,7 @@
     "newPaymentMethod": {
       "add": "add",
       "addButton": "Add payment method",
-      "newMethod": "Choose another payment method",
+      "newMethod": "Add another payment method",
       "addDescription": "You can add your payment methods (e.g. credit cards, bank accounts) so that you don't have to re-add them from scratch for every transaction"
     },
     "saveCard": {

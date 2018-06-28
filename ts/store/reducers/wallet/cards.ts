@@ -7,8 +7,7 @@ import { createSelector } from "reselect";
 import { CreditCard } from "../../../types/CreditCard";
 import {
   CARDS_FETCHED,
-  SELECT_CARD_FOR_DETAILS,
-  SELECT_CARD_FOR_TRANSACTION
+  SELECT_CARD_FOR_DETAILS
 } from "../../actions/constants";
 import { Action } from "../../actions/types";
 import { IndexedById, toIndexed } from "../../helpers/indexer";
@@ -16,14 +15,12 @@ import { GlobalState } from "../types";
 
 export type CardsState = Readonly<{
   cards: IndexedById<CreditCard>;
-  selectedCardId: Option<number>;
-  selectedCard: Option<CreditCard>
+  selectedCardId: Option<number>
 }>;
 
 export const CARDS_INITIAL_STATE: CardsState = {
   cards: {},
-  selectedCardId: none,
-  selectedCard: none
+  selectedCardId: none
 };
 
 // selectors
@@ -70,13 +67,6 @@ const reducer = (
       selectedCardId: some(
         typeof action.payload === "number" ? action.payload : action.payload.id
       )
-    };
-  }
-
-  if (action.type === SELECT_CARD_FOR_TRANSACTION) {
-    return {
-      ...state,
-      selectedCard: some(action.payload)
     };
   }
   return state;

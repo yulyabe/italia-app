@@ -3,6 +3,7 @@
  * TODO:
  *  - implement the proper navigation
  *    https://www.pivotaltracker.com/n/projects/2048617/stories/158395136
+ *  - define what to do when the cancel button is pressed (now come back to wallethome)
  */
 import {
   Body,
@@ -31,8 +32,8 @@ import { connect } from 'react-redux';
 import { Option } from 'fp-ts/lib/Option';
 import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet/payment';
 import { Dispatch } from 'redux';
-import { setCardForTransaction } from '../../../store/actions/wallet/cards';
 import { TouchableOpacity } from 'react-native';
+import { selectCardForTransaction } from '../../../store/actions/wallet/cards';
 
 type ReduxMappedStateProps = Readonly<{
   cards: ReadonlyArray<CreditCard>;
@@ -89,10 +90,10 @@ class ChoosePaymentMethodScreen extends React.Component<Props, never> {
             <View spacer={true} />
             <List
               removeClippedSubviews={false}
-              dataArray={this.props.cards as any[]} // tslint:disable-line: readonly-array
-              renderRow={(item): React.ReactElement<any> => (
+              dataArray={this.props.cards as CreditCard[]} // tslint:disable-line: readonly-array
+              renderRow={(item: CreditCard): React.ReactElement<CreditCard> => (
                 <TouchableOpacity
-                  onPress={() => this.props.CardForTransactionSelected(item)}>  
+                  onPress={(): void => this.props.CardForTransactionSelected(item)}>  
                     <CreditCardComponent
                       navigation={this.props.navigation}
                       item={item}
@@ -118,7 +119,7 @@ class ChoosePaymentMethodScreen extends React.Component<Props, never> {
           <Button
             block={true}
             cancel={true}
-            onPress={(): boolean => this.props.navigation.goBack()}
+            onPress={(): boolean => this.props.navigation.navigate(ROUTES.WALLET_HOME)}
           >
             <Text>{I18n.t("global.buttons.cancel")}</Text>
           </Button>
@@ -134,7 +135,7 @@ const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
-  CardForTransactionSelected: (selectedCard: CreditCard) => dispatch(setCardForTransaction(selectedCard))
+  CardForTransactionSelected: (selectedCard: CreditCard) => dispatch(selectCardForTransaction(selectedCard))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChoosePaymentMethodScreen);

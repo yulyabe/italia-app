@@ -1,21 +1,21 @@
-import { PatternString } from "italia-ts-commons/lib/strings";
+import { none, Option, some } from "fp-ts/lib/Option";
 import * as t from "io-ts";
-import { Option, none, some } from "fp-ts/lib/Option";
-import { Action } from "../../actions/types";
-import {
-  STORE_TRANSACTION_DATA,
-  TRANSACTION_DATA_FETCHED,
-  SELECT_CARD_FOR_TRANSACTION,
-  START_PAYMENT,
-  END_PAYMENT
-} from "../../actions/constants";
+import { PatternString } from "italia-ts-commons/lib/strings";
+import { CreditCard } from "../../../types/CreditCard";
 import {
   NotifiedTransaction,
   TransactionEntity,
   TransactionSubject
 } from "../../../types/wallet";
+import {
+  END_PAYMENT,
+  SELECT_CARD_FOR_TRANSACTION,
+  START_PAYMENT,
+  STORE_TRANSACTION_DATA,
+  TRANSACTION_DATA_FETCHED
+} from "../../actions/constants";
+import { Action } from "../../actions/types";
 import { GlobalState } from "../types";
-import { CreditCard } from '../../../types/CreditCard';
 
 export const NoticeNumber = PatternString("^\\d{8,18}$");
 export type NoticeNumber = t.TypeOf<typeof NoticeNumber>;
@@ -55,7 +55,7 @@ export const paymentDataSelector = (state: GlobalState): Option<PaymentData> =>
 export const paymentCardSelector = (state: GlobalState): Option<CreditCard> =>
   state.wallet.payment.paymentCard;
 
-export const paymentIsInTransactionSelector = (state:GlobalState): boolean =>
+export const paymentIsInTransactionSelector = (state: GlobalState): boolean =>
   state.wallet.payment.isInTransaction;
 
 const reducer = (
@@ -78,21 +78,21 @@ const reducer = (
     return {
       ...state,
       paymentCard: some(action.payload)
-    }
+    };
   }
   if (action.type === START_PAYMENT) {
     return {
       ...state,
       isInTransaction: true
-    }
+    };
   }
   if (action.type === END_PAYMENT) {
-    return{
+    return {
       ...state,
       isInTransaction: false
-    }
+    };
   }
-  
+
   return state;
 };
 

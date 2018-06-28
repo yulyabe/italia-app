@@ -2,33 +2,39 @@
  * A saga that manages the Wallet.
  */
 
-import { call, Effect, put, takeLatest, take } from "redux-saga/effects";
+import { call, Effect, put, take, takeLatest } from "redux-saga/effects";
 
-import { WalletAPI } from "../api/wallet/wallet-api";
-import {
-  FETCH_CARDS_REQUEST,
-  FETCH_TRANSACTIONS_REQUEST,
-  START_PAYMENT,
-  TRANSACTION_DATA_ENTERED,
-  PROCEED_WITH_PAYMENT,
-  CONFIRM_TRANSACTION,
-  SHOW_CARDS_LIST_FOR_TRANSACTION,
-  SHOW_SELECTED_CARD_FOR_TRANSACTION,
-  SELECT_CARD_FOR_TRANSACTION,
-  END_PAYMENT
-} from "../store/actions/constants";
-import { cardsFetched, selectCardForTransaction } from "../store/actions/wallet/cards";
-import { transactionsFetched } from "../store/actions/wallet/transactions";
-import { CreditCard, UNKNOWN_CARD } from "../types/CreditCard";
-import { WalletTransaction } from "../types/wallet";
 import { NavigationActions } from "react-navigation";
+import { WalletAPI } from "../api/wallet/wallet-api";
 import ROUTES from "../navigation/routes";
 import {
+  CONFIRM_TRANSACTION,
+  END_PAYMENT,
+  FETCH_CARDS_REQUEST,
+  FETCH_TRANSACTIONS_REQUEST,
+  PROCEED_WITH_PAYMENT,
+  SELECT_CARD_FOR_TRANSACTION,
+  SHOW_CARDS_LIST_FOR_TRANSACTION,
+  SHOW_SELECTED_CARD_FOR_TRANSACTION,
+  START_PAYMENT,
+  TRANSACTION_DATA_ENTERED
+} from "../store/actions/constants";
+import {
+  cardsFetched,
+  selectCardForTransaction
+} from "../store/actions/wallet/cards";
+import {
+  startPayment,
   storeTransactionData,
-  transactionDataFetched,
-  startPayment
+  transactionDataFetched
 } from "../store/actions/wallet/payment";
-import { PaymentData, PaymentIdentifier } from "../store/reducers/wallet/payment";
+import { transactionsFetched } from "../store/actions/wallet/transactions";
+import {
+  PaymentData,
+  PaymentIdentifier
+} from "../store/reducers/wallet/payment";
+import { CreditCard, UNKNOWN_CARD } from "../types/CreditCard";
+import { WalletTransaction } from "../types/wallet";
 
 function* fetchTransactions(
   loadTransactions: () => Promise<ReadonlyArray<WalletTransaction>>
@@ -61,7 +67,7 @@ function* handlePaymentMethodSelection(
   switch (currentChoice) {
     case DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION: {
       yield put(selectCardForTransaction(cardforTransaction));
-      // navigate to the preview of both the card to use for the transaction and the transaction 
+      // navigate to the preview of both the card to use for the transaction and the transaction
       yield put(
         NavigationActions.navigate({
           routeName: ROUTES.WALLET_CONFIRM_TO_PROCEED
@@ -98,24 +104,26 @@ function* handlePaymentMethodSelection(
   }
 }
 
-/** TODO: verificare cosa deve contenere il campo CodStazPA. 
+/** TODO: verificare cosa deve contenere il campo CodStazPA.
  * Se corrisponde all'application code, questo non è necessariamente presente.
- * La presenza dovrebbe essere in funzione del valore assunto dall'AUX DIGIT 
+ * La presenza dovrebbe essere in funzione del valore assunto dall'AUX DIGIT
  * VEDI http://pagopa-docs-specattuative.readthedocs.io/it/latest/specifiche_attuative_pagamenti.html
  * SEZIONE 8.2. Generazione del Numero Avviso e del codice IUV
  */
-function* createJSONtoVerifyTransaction(data: PaymentIdentifier): Iterator<Effect> {
-  return { 
+function* createJSONtoVerifyTransaction(
+  data: PaymentIdentifier
+): Iterator<Effect> {
+  return {
     codiceIdRPT: {
       CF: data.authorityId,
       CodStazPA: "12",
-      AuxDigit: "0", //first digit of the number
+      AuxDigit: "0", // first digit of the number
       CodIUV: "1234567890123"
     },
     datiPagamentoPSP: {
       importoSingoloVersamento: data.originalAmount
     }
-  }
+  };
 }
 
 function* paymentSaga(): Iterator<Effect> {
@@ -137,8 +145,7 @@ function* paymentSaga(): Iterator<Effect> {
   // fetch transaction data from pagopa proxy
   const dataToSend = yield call(createJSONtoVerifyTransaction, action.payload);
 
-
-  //moked data
+  // moked data
   const mockedPaymentData: PaymentData = {
     transactionInfo: {
       noticeCode: "112324875636161",
@@ -151,11 +158,11 @@ function* paymentSaga(): Iterator<Effect> {
       expireDate: new Date("03/01/2018"),
       tranche: "unica",
       cbill: "A0EDT",
-      transactionCost: 0.50
+      transactionCost: 0.5
     },
     entity: {
       code: "01199250158",
-      
+
       name: "Comune di Gallarate - Settore Tributi",
       address: "Via Cavour n.2 - Palazzo Broletto,21013",
       city: "Gallarate (VA)",
@@ -184,9 +191,9 @@ function* paymentSaga(): Iterator<Effect> {
   yield take(PROCEED_WITH_PAYMENT);
 
   // TODO: get favorite card from redux state or PagoPA
-  //TODO: define if change UNKNOWN CARD with undefined
+  // TODO: define if change UNKNOWN CARD with undefined
   const mockedFavoriteCard: CreditCard = UNKNOWN_CARD; // some(1)
-  
+
   /**
    * Depending of the existence of a favourite credit card, the navigation will change:
    * - if it exists, the user will navigate to the transaction summary with the favourite card
@@ -194,21 +201,26 @@ function* paymentSaga(): Iterator<Effect> {
    */
   let EventToManage;
   let CardForTransaction: CreditCard = mockedFavoriteCard;
-  
+
   if (mockedFavoriteCard !== UNKNOWN_CARD) {
     EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
-  }
-  else {
+  } else {
     EventToManage = DefineWhatDisplay.SHOW_CARDS_LIST_FOR_TRANSACTION;
   }
   yield call(handlePaymentMethodSelection, EventToManage, CardForTransaction);
-  
+
   yield call(startPayment);
 
   while (true) {
-    const action = yield take([ SHOW_SELECTED_CARD_FOR_TRANSACTION, SHOW_CARDS_LIST_FOR_TRANSACTION, SELECT_CARD_FOR_TRANSACTION, END_PAYMENT, CONFIRM_TRANSACTION ]);
+    const action = yield take([
+      SHOW_SELECTED_CARD_FOR_TRANSACTION,
+      SHOW_CARDS_LIST_FOR_TRANSACTION,
+      SELECT_CARD_FOR_TRANSACTION,
+      END_PAYMENT,
+      CONFIRM_TRANSACTION
+    ]);
     switch (action.type) {
-      case SHOW_SELECTED_CARD_FOR_TRANSACTION: 
+      case SHOW_SELECTED_CARD_FOR_TRANSACTION:
         EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;
         CardForTransaction = action.payload;
         break;
@@ -231,10 +243,8 @@ function* paymentSaga(): Iterator<Effect> {
     }
   }
 
-  //TODO: ask to PagoPA to activate the transaction
-
+  // TODO: ask to PagoPA to activate the transaction
 }
-
 
 /**
  * saga that manages the wallet (transactions + credit cards)

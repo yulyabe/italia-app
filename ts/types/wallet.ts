@@ -24,7 +24,7 @@ export type NotifiedTransaction = Readonly<{
   expireDate: Date;
   tranche: string;
   cbill: string;
-  transactionCost:number; // also in WalletTransaction
+  transactionCost: number; // also in WalletTransaction
 }>;
 
 /**
@@ -40,7 +40,7 @@ export type WalletTransaction = {
   time: string; // it could be the same of date, having date as date.toLocaleTimeString() TODO: @https://www.pivotaltracker.com/n/projects/2048617/stories/157769657
   paymentReason: string;
   recipient: string;
-  amount: number; //currentAmount
+  amount: number; // currentAmount
   currency: string;
   transactionCost: number;
   isNew: boolean;
@@ -61,8 +61,6 @@ export type TransactionSubject = Readonly<{
   name: string;
   address: string;
 }>;
-
-
 
 export const UNKNOWN_TRANSACTION: WalletTransaction = {
   id: -1,

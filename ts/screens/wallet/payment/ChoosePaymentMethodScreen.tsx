@@ -5,6 +5,7 @@
  *    https://www.pivotaltracker.com/n/projects/2048617/stories/158395136
  *  - define what to do when the cancel button is pressed (now come back to wallethome)
  */
+import { Option } from "fp-ts/lib/Option";
 import {
   Body,
   Button,
@@ -17,28 +18,30 @@ import {
   View
 } from "native-base";
 import * as React from "react";
+import { TouchableOpacity } from "react-native";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import { WalletStyles } from "../../../components/styles/wallet";
 import AppHeader from "../../../components/ui/AppHeader";
+import IconFont from "../../../components/ui/IconFont";
+import CreditCardComponent from "../../../components/wallet/card";
 import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComponent";
 import I18n from "../../../i18n";
 import ROUTES from "../../../navigation/routes";
-import IconFont from "../../../components/ui/IconFont";
-import CreditCardComponent from "../../../components/wallet/card";
+import { selectCardForTransaction } from "../../../store/actions/wallet/cards";
+import { endPayment } from "../../../store/actions/wallet/payment";
 import { GlobalState } from "../../../store/reducers/types";
 import { creditCardsSelector } from "../../../store/reducers/wallet/cards";
+import {
+  PaymentData,
+  paymentDataSelector
+} from "../../../store/reducers/wallet/payment";
 import { CreditCard } from "../../../types/CreditCard";
-import { connect } from 'react-redux';
-import { Option } from 'fp-ts/lib/Option';
-import { PaymentData, paymentDataSelector } from '../../../store/reducers/wallet/payment';
-import { Dispatch } from 'redux';
-import { TouchableOpacity } from 'react-native';
-import { selectCardForTransaction } from '../../../store/actions/wallet/cards';
-import { endPayment } from '../../../store/actions/wallet/payment';
 
 type ReduxMappedStateProps = Readonly<{
   cards: ReadonlyArray<CreditCard>;
-  paymentData: Option<PaymentData>
+  paymentData: Option<PaymentData>;
 }>;
 
 type ReduxMappedDispatchProps = Readonly<{
@@ -56,7 +59,7 @@ class ChoosePaymentMethodScreen extends React.Component<Props, never> {
   private goBack() {
     this.props.navigation.goBack();
   }
-  
+
   public render(): React.ReactNode {
     if (this.props.paymentData.isNone()) {
       return <Text>ERROR</Text>;
@@ -95,15 +98,18 @@ class ChoosePaymentMethodScreen extends React.Component<Props, never> {
               dataArray={this.props.cards as CreditCard[]} // tslint:disable-line: readonly-array
               renderRow={(item: CreditCard): React.ReactElement<CreditCard> => (
                 <TouchableOpacity
-                  onPress={(): void => this.props.CardForTransactionSelected(item)}>  
-                    <CreditCardComponent
-                      navigation={this.props.navigation}
-                      item={item}
-                      menu={false}
-                      favorite={false}
-                      lastUsage={false}
-                    />
-                  </TouchableOpacity>
+                  onPress={(): void =>
+                    this.props.CardForTransactionSelected(item)
+                  }
+                >
+                  <CreditCardComponent
+                    navigation={this.props.navigation}
+                    item={item}
+                    menu={false}
+                    favorite={false}
+                    lastUsage={false}
+                  />
+                </TouchableOpacity>
               )}
             />
           </View>
@@ -137,8 +143,12 @@ const mapStateToProps = (state: GlobalState): ReduxMappedStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
-  CardForTransactionSelected: (selectedCard: CreditCard) => dispatch(selectCardForTransaction(selectedCard)),
+  CardForTransactionSelected: (selectedCard: CreditCard) =>
+    dispatch(selectCardForTransaction(selectedCard)),
   EndPayment: () => dispatch(endPayment())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChoosePaymentMethodScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ChoosePaymentMethodScreen);

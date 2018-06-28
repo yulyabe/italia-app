@@ -2,6 +2,7 @@
  * This component will display the transaction details if updates on the amount are identified
  */
 import { H1, H3, Icon, Right, Text, View } from "native-base";
+import { Left } from "native-base";
 import * as React from "react";
 import { StyleSheet } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
@@ -9,7 +10,6 @@ import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { WalletStyles } from "../../components/styles/wallet";
 import I18n from "../../i18n";
 import variables from "../../theme/variables";
-import { Left } from 'native-base';
 
 type Props = Readonly<{
   navigation: NavigationScreenProp<NavigationState>;

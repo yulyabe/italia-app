@@ -4,6 +4,7 @@
  * - integrate contextual help:
  *    https://www.pivotaltracker.com/n/projects/2048617/stories/157874540
  */
+import { Option } from "fp-ts/lib/Option";
 import {
   Body,
   Button,
@@ -18,8 +19,6 @@ import * as React from "react";
 import { StyleSheet } from "react-native";
 import { Col, Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { PaymentData, paymentDataSelector, paymentCardSelector } from '../../../store/reducers/wallet/payment';
-import { Option } from 'fp-ts/lib/Option';
 import { connect, Dispatch } from "react-redux";
 import { WalletStyles } from "../../../components/styles/wallet";
 import AppHeader from "../../../components/ui/AppHeader";
@@ -27,9 +26,18 @@ import IconFont from "../../../components/ui/IconFont";
 import CreditCardComponent from "../../../components/wallet/card";
 import PaymentBannerComponent from "../../../components/wallet/PaymentBannerComponent";
 import I18n from "../../../i18n";
+import {
+  confirmTransaction,
+  endPayment,
+  showCardsListForTransaction
+} from "../../../store/actions/wallet/payment";
 import { GlobalState } from "../../../store/reducers/types";
+import {
+  paymentCardSelector,
+  PaymentData,
+  paymentDataSelector
+} from "../../../store/reducers/wallet/payment";
 import { CreditCard, UNKNOWN_CARD } from "../../../types/CreditCard";
-import { confirmTransaction, showCardsListForTransaction, endPayment } from '../../../store/actions/wallet/payment';
 
 type ReduxMappedStateProps = Readonly<{
   paymentData: Option<PaymentData>;
@@ -78,7 +86,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
       return <Text>ERROR</Text>;
     }
 
-    const { transactionInfo, recipient } = this.props.paymentData.value; 
+    const { transactionInfo, recipient } = this.props.paymentData.value;
 
     return (
       <Container>
@@ -127,10 +135,7 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
                 <Col size={4}>
                   <Text>
                     {`${I18n.t("wallet.ConfirmPayment.fee")} `}
-                    <Text 
-                      link={true}
-                      onPress={()=> this.props.ChangeCard()}
-                    >
+                    <Text link={true} onPress={() => this.props.ChangeCard()}>
                       {I18n.t("wallet.ConfirmPayment.why")}
                     </Text>
                   </Text>
@@ -151,7 +156,10 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
                 <Col>
                   <View spacer={true} large={true} />
                   <H1 style={WalletStyles.textRight}>
-                    {`${this.getTotalAmount(transactionInfo.currentAmount, transactionInfo.transactionCost).toFixed(2)} €`}
+                    {`${this.getTotalAmount(
+                      transactionInfo.currentAmount,
+                      transactionInfo.transactionCost
+                    ).toFixed(2)} €`}
                   </H1>
                 </Col>
               </Row>
@@ -161,7 +169,10 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
                   <View spacer={true} large={true} />
                   <Text style={WalletStyles.textCenter}>
                     {`${I18n.t("wallet.ConfirmPayment.info2")} `}
-                    <Text link={true} onPress={(): void => this.props.ChangeCard()}>
+                    <Text
+                      link={true}
+                      onPress={(): void => this.props.ChangeCard()}
+                    >
                       {I18n.t("wallet.ConfirmPayment.changeMethod")}
                     </Text>
                   </Text>
@@ -186,8 +197,8 @@ class ConfirmToProceedTransactionScreen extends React.Component<Props, never> {
         </Content>
 
         <View footer={true}>
-          <Button 
-            block={true} 
+          <Button
+            block={true}
             primary={true}
             onPress={() => this.props.ConfirmTransaction()}
           >
@@ -229,7 +240,9 @@ const mapDispatchToProps = (dispatch: Dispatch): ReduxMappedDispatchProps => ({
   ConfirmTransaction: () => dispatch(confirmTransaction()),
   ChangeCard: () => dispatch(showCardsListForTransaction()),
   EndPayment: () => dispatch(endPayment())
-
 });
 
-export default connect(mapStateToProps,mapDispatchToProps)(ConfirmToProceedTransactionScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ConfirmToProceedTransactionScreen);

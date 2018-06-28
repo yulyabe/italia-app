@@ -1,10 +1,10 @@
 import { CreditCard } from "../../../types/CreditCard";
 import {
   CARDS_FETCHED,
+  END_PAYMENT,
   FETCH_CARDS_REQUEST,
   SELECT_CARD_FOR_DETAILS,
-  SELECT_CARD_FOR_TRANSACTION,
-  END_PAYMENT
+  SELECT_CARD_FOR_TRANSACTION
 } from "../constants";
 
 export type FetchCardsRequest = Readonly<{
@@ -23,11 +23,11 @@ export type CardSelectedForDetails = Readonly<{
 
 export type CardSelectedForTransaction = Readonly<{
   type: typeof SELECT_CARD_FOR_TRANSACTION;
-  payload: CreditCard
+  payload: CreditCard;
 }>;
 
 export type EndPayment = Readonly<{
-  type: typeof END_PAYMENT
+  type: typeof END_PAYMENT;
 }>;
 
 export type CardsActions =

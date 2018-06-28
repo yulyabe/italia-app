@@ -199,8 +199,13 @@ function* paymentSaga(): Iterator<Effect> {
    * - if it exists, the user will navigate to the transaction summary with the favourite card
    * - if it does not exist, the user will navigate to the list of available cards
    */
+<<<<<<< HEAD
   let EventToManage;
   let CardForTransaction: CreditCard = mockedFavoriteCard;
+=======
+  const EventToManage;
+  const CardForTransaction: CreditCard = mockedFavoriteCard;
+>>>>>>> 910610bb1c3ea1ea5efaa81ca859cc5fcb9620ef
 
   if (mockedFavoriteCard !== UNKNOWN_CARD) {
     EventToManage = DefineWhatDisplay.SHOW_SELECTED_CARD_FOR_TRANSACTION;

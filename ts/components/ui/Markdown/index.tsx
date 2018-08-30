@@ -1,10 +1,12 @@
 import merge from "lodash/merge";
 import { Text, View } from "native-base";
 import * as React from "react";
+import { connect } from "react-redux";
 import * as SimpleMarkdown from "simple-markdown";
 
 import { isDevEnvironment } from "../../../config";
 import I18n from "../../../i18n";
+import { Dispatch, ReduxProps } from "../../../store/actions/types";
 import reactNativeRules from "./rules";
 
 // A regex to test if a string ends with `/n/n`
@@ -20,7 +22,11 @@ const markdownParser = SimpleMarkdown.parserFor(rules);
 const ruleOutput = SimpleMarkdown.ruleOutput(rules, "react_native");
 const reactOutput = SimpleMarkdown.reactFor(ruleOutput);
 
-function renderMarkdown(body: string): React.ReactNode {
+function renderMarkdown(
+  body: string,
+  initialState: SimpleMarkdown.State,
+  dispatch: Dispatch
+): React.ReactNode {
   try {
     /**
      * Since many rules expect blocks to end in "\n\n", we append that
@@ -29,13 +35,18 @@ function renderMarkdown(body: string): React.ReactNode {
      */
     const blockSource = BLOCK_END_REGEX.test(body) ? body : body + "\n\n";
 
+    // We merge the initialState with always needed attributes
+    const state: SimpleMarkdown.State = {
+      ...initialState,
+      inline: false,
+      dispatch
+    };
+
     // Generate the syntax tree
-    const syntaxTree = markdownParser(blockSource, {
-      inline: false
-    });
+    const syntaxTree = markdownParser(blockSource, state);
 
     // Render the syntax tree using the rules and return the value
-    return reactOutput(syntaxTree);
+    return reactOutput(syntaxTree, state);
   } catch (error) {
     return isDevEnvironment ? (
       <Text>
@@ -52,8 +63,19 @@ function renderMarkdown(body: string): React.ReactNode {
  * A component that accepts "markdown" as child and render react native
  * components.
  */
-const Markdown: React.SFC<{
-  children: string;
-}> = props => <View>{renderMarkdown(props.children)}</View>;
 
-export default Markdown;
+type OwnProps = {
+  children: string;
+  initialState?: SimpleMarkdown.State;
+};
+
+type Props = OwnProps & ReduxProps;
+
+const Markdown: React.SFC<Props> = ({
+  children,
+  initialState = {},
+  // We need dispatch in case of internal link to navigate to a specific screen
+  dispatch
+}) => <View>{renderMarkdown(children, initialState, dispatch)}</View>;
+
+export default connect()(Markdown);

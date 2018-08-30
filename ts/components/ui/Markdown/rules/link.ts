@@ -45,18 +45,25 @@ function rule() {
     const newState = { ...state, withinLink: true };
     const maybeInternalRoute = getInternalRoute(node.target);
 
-    // tslint:disable-next-line:no-let
-    let onPressHandler = () =>
-      Linking.openURL(node.target).catch(_ => undefined);
-
-    if (maybeInternalRoute.isSome() && state.dispatch) {
-      const internalRoute = maybeInternalRoute.value;
-      const navigateToRouteAction = NavigationActions.navigate({
-        routeName: internalRoute
-      });
-
-      onPressHandler = () => state.dispatch(navigateToRouteAction);
-    }
+    /** Get a specific onPress handler
+     *
+     * It can be:
+     * () => state.dispatch(NavigationActions.navigate({routeName: internalRoute))} for internal links
+     * () => Linking.openURL(node.target).catch(_ => undefined) for external links
+     * undefined if we can't handle the link
+     */
+    const onPressHandler = maybeInternalRoute.fold(
+      () => Linking.openURL(node.target).catch(_ => undefined),
+      internalRoute =>
+        state.dispatch
+          ? () =>
+              state.dispatch(
+                NavigationActions.navigate({
+                  routeName: internalRoute
+                })
+              )
+          : undefined
+    );
 
     // Create the Text element that must go inside <Button>
     return React.createElement(

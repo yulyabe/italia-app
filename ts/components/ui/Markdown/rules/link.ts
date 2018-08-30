@@ -13,7 +13,7 @@ type ScreenNameToRouteMap = {
 };
 
 // Regex to match uri like `internal://screen/profile`
-const INTERNAL_TARGET_REGEX = /internal:\/\/screen\/(.*)/gm;
+const INTERNAL_TARGET_REGEX = /^internal:\/\/screen\/([\w_-]+)$/;
 
 // Here we put all the allowed screen name with the mapping to the react-navigation route
 const SCREEN_NAME_TO_ROUTE_MAP: ScreenNameToRouteMap = {

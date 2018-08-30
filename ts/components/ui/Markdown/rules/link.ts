@@ -13,7 +13,7 @@ type ScreenNameToRouteMap = {
 };
 
 // Regex to match uri like `internal://screen/profile`
-const INTERNAL_TARGET_REGEX = /^internal:\/\/screen\/([\w_-]+)$/;
+const INTERNAL_TARGET_REGEX_PATTERN = /^internal:\/\/screen\/([\w_-]+)$/;
 
 // Here we put all the allowed screen name with the mapping to the react-navigation route
 const SCREEN_NAME_TO_ROUTE_MAP: ScreenNameToRouteMap = {
@@ -21,12 +21,8 @@ const SCREEN_NAME_TO_ROUTE_MAP: ScreenNameToRouteMap = {
 };
 
 function getInternalRoute(target: string): Option<string> {
-  const match = INTERNAL_TARGET_REGEX.exec(target);
+  const match = new RegExp(INTERNAL_TARGET_REGEX_PATTERN).exec(target);
   if (match) {
-    // Reset the index for the next call
-    // tslint:disable-next-line:no-object-mutation
-    INTERNAL_TARGET_REGEX.lastIndex = 0;
-
     // Get the screen name from the regex group
     const screenName = match[1];
 

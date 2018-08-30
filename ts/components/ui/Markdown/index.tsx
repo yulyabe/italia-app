@@ -71,7 +71,7 @@ type OwnProps = {
 
 type Props = OwnProps & ReduxProps;
 
-const Markdown: React.SFC<Props> = ({
+export const Markdown: React.SFC<Props> = ({
   children,
   initialState = {},
   // We need dispatch in case of internal link to navigate to a specific screen

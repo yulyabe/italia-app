@@ -37,11 +37,12 @@ const styles = StyleSheet.create({
   },
   firstCard: {
     flex: 1,
-    transform: [{ rotateX: "-20deg" }, { scaleX: 0.98 }]
+    transform: [{ perspective: 850 }, { rotateX: "-20deg" }, { scaleX: 0.98 }]
   },
   secondCard: {
     flex: 1,
     transform: [
+      { perspective: 850 },
       { rotateX: "-20deg" },
       { translateY: -(58 / 2 + 20) * (1 - Math.cos(20)) },
       { scaleX: 0.98 }

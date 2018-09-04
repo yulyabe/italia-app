@@ -5,17 +5,16 @@
  */
 import { Button, H1, Left, Right, Text, View } from "native-base";
 import * as React from "react";
-import { Image, StyleSheet } from "react-native";
+import { ActivityIndicator, Image, StyleSheet } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { connect } from "react-redux";
-
 import { WalletStyles } from "../../components/styles/wallet";
 import TransactionsList, {
   TransactionsDisplayed
 } from "../../components/wallet/TransactionsList";
-import { CardEnum, CardType } from "../../components/wallet/WalletLayout";
 import WalletLayout from "../../components/wallet/WalletLayout";
+import { CardEnum, CardType } from "../../components/wallet/WalletLayout";
 import { DEFAULT_APPLICATION_NAME } from "../../config";
 import I18n from "../../i18n";
 import ROUTES from "../../navigation/routes";
@@ -24,7 +23,9 @@ import { fetchTransactionsRequest } from "../../store/actions/wallet/transaction
 import { fetchWalletsRequest } from "../../store/actions/wallet/wallets";
 import { GlobalState } from "../../store/reducers/types";
 import { walletsSelector } from "../../store/reducers/wallet/wallets";
+import variables from "../../theme/variables";
 import { Wallet } from "../../types/pagopa";
+import { WalletAPI } from '../../api/wallet/wallet-api';
 
 type ReduxMappedStateProps = Readonly<{
   cards: ReadonlyArray<Wallet>;
@@ -42,6 +43,10 @@ type OwnProps = Readonly<{
 
 type Props = ReduxMappedStateProps & ReduxMappedDispatchProps & OwnProps;
 
+type State = Readonly<{
+  isUpdated: boolean;
+}>;
+
 const styles = StyleSheet.create({
   flex: {
     alignItems: "flex-end",
@@ -55,13 +60,35 @@ const styles = StyleSheet.create({
 /**
  * Wallet Home Screen
  */
-class WalletHomeScreen extends React.Component<Props, never> {
+class WalletHomeScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isUpdated: false
+    };
+  }
+
   private header() {
     return (
       <Row style={styles.flex}>
         <H1 style={WalletStyles.white}>{I18n.t("wallet.wallet")}</H1>
         <Image source={require("../../../img/wallet/bank.png")} />
       </Row>
+    );
+  }
+
+  private withLoaderHeader() {
+    return (
+      // tslint:disable-next-line:no-unused-expression
+      <Grid>
+        {this.header()}
+        <View spacer={true} extralarge={true} />
+        <ActivityIndicator
+          size={"large"}
+          color={variables.brandPrimaryInverted}
+        />
+        <View spacer={true} extralarge={true} />
+      </Grid>
     );
   }
 
@@ -91,7 +118,7 @@ class WalletHomeScreen extends React.Component<Props, never> {
     );
   }
 
-  private withoutCardsHeader() {
+  private withNoCardsHeader() {
     return (
       <Grid>
         {this.header()}
@@ -133,6 +160,7 @@ class WalletHomeScreen extends React.Component<Props, never> {
     // WIP WIP create pivotal story
     this.props.loadWallets();
     this.props.loadTransactions();
+    this.setState({ isUpdated: true });
   }
 
   // check the cards to display (none, one or two cards)
@@ -149,13 +177,36 @@ class WalletHomeScreen extends React.Component<Props, never> {
     }
   }
 
-  public render(): React.ReactNode {
+  private withLoaderChild(): React.ReactNode {
+    return (
+      <View>
+        <View spacer={true} extralarge={true} />
+        <ActivityIndicator size={"large"} />
+        <View spacer={true} extralarge={true} />
+      </View>
+    );
+  }
+
+  private getContentBeforeLoad(): React.ReactNode {
+    return (
+      <WalletLayout
+        title={DEFAULT_APPLICATION_NAME}
+        navigation={this.props.navigation}
+        headerContents={this.withLoaderHeader()}
+        cardType={this.getCardType()}
+        allowGoBack={false}
+      >
+        {this.withLoaderChild()}
+      </WalletLayout>
+    );
+  }
+
+  private getContentAfterLoad(): React.ReactNode {
     const showCards = this.props.cards.length > 0;
     const moreCards = this.props.cards.length > 1;
     const headerContents = showCards
       ? this.withCardsHeader()
-      : this.withoutCardsHeader();
-
+      : this.withNoCardsHeader();
     return (
       <WalletLayout
         title={DEFAULT_APPLICATION_NAME}
@@ -173,6 +224,12 @@ class WalletHomeScreen extends React.Component<Props, never> {
         />
       </WalletLayout>
     );
+  }
+
+  public render(): React.ReactNode {
+    return this.state.isUpdated
+      ? this.getContentAfterLoad()
+      : this.getContentBeforeLoad();
   }
 }
 

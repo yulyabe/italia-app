@@ -79,3 +79,10 @@ vendor
 
 # Auto generated definitions
 definitions
+ts/sagas/index.ts
+ts/sagas/startup.ts
+ts/sagas/index.ts
+.gitignore
+ts/api/wallet/wallet-api.ts
+ts/sagas/startup.ts
+ts/screens/wallet/WalletHomeScreen.tsx

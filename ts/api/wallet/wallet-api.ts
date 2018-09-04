@@ -473,6 +473,10 @@ export class WalletAPI {
     return wallets;
   }
 
+  public static getWallet(): ReadonlyArray<Wallet> {
+    return wallets;
+  }
+
   public static async getTransactions(): Promise<ReadonlyArray<Transaction>> {
     return transactions;
   }

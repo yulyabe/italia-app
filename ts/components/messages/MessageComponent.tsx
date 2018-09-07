@@ -92,14 +92,12 @@ const styles = StyleSheet.create({
 class MessageComponent extends React.Component<Props> {
   public render() {
     const message = this.props.message;
-    const {
-      id,
-      subject,
-      created_at,
-      due_date,
-      payment_data,
-      sender_service_id
-    } = message;
+
+    // Get message main data
+    const { id, created_at, sender_service_id } = message;
+
+    // Get message content data
+    const { subject, due_date, payment_data } = message.content;
 
     const senderService = this.props.serviceByIdMap[sender_service_id];
 
@@ -108,7 +106,7 @@ class MessageComponent extends React.Component<Props> {
       .map(_ => () => {
         return AddCalendarEvent.presentEventCreatingDialog({
           title: I18n.t("messages.cta.reminderTitle", {
-            subject: message.subject
+            subject
           }),
           startDate: formatDateAsReminder(_),
           allDay: true

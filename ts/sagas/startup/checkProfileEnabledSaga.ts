@@ -30,6 +30,8 @@ export function* checkProfileEnabledSaga(
     // Upsert the user profile to enable inbox and webhook
     yield put(
       profileUpsertRequest({
+        // To create a new profile
+        version: 0,
         is_inbox_enabled: true,
         is_webhook_enabled: true,
         email: profile.spid_email

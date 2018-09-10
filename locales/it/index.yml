@@ -57,8 +57,7 @@ profile:
     upsert: Errore nella creazione o nell'aggiornamento del profilo
   main:
     screenTitle: Profilo
-    screenSubtitle: "Qui trovi informazioni e dati legati al tuo account: identità, sicurezza, tuoi
-      dati personali, etc."
+    screenSubtitle: "Qui puoi gestire il tuo account su IO e rivedere le impostazioni di utilizzo dell’app."
     logout: Logout/Esci
     privacy:
       title: Privacy
@@ -103,18 +102,14 @@ authentication:
   landing:
     login: Entra con SPID
     nospid: Non hai SPID? Scopri di più
-    card1-title: Tutti i messaggi in un solo posto
-    card1-content: Visualizza tutte le comunicazioni in arrivo dalle Amministrazioni
-      Pubbliche
-    card2-title: Usa i tuoi metodi di pagamento preferiti
-    card2-content: Puoi pagare un tributo o una multa con il tuo conto corrente e
-      le tue carte
-    card3-title: Paga velocemente un avviso cartaceo
-    card3-content: Tramite la scansione del QR code puoi velocemente pagare anche
-      un avviso cartaceo
-    card4-title: Potrai utilizzare l'app solo tramite SPID
-    card4-content: L'accesso è consentito solo tramite SPID (Sistema Pubblico di Identità
-      Digitale) per garantire la tua sicurezza online
+    card1-title: IO, l’app unica per i servizi pubblici
+    card1-content: IO è l’applicazione del Governo italiano che permette a tutti i cittadini di usare servizi pubblici nazionali e locali dal proprio smartphone in maniera semplice e sicura.
+    card2-title: Tutti i messaggi, pagamenti e documenti in un solo posto
+    card2-content: L’app permette di ricevere comunicazioni dalla Pubblica Amministrazione, richiedere certificati, e effettuare pagamenti sicuri di tributi e multe.
+    card3-title: Un accesso sicuro grazie a SPID
+    card3-content: Per garantire la tua sicurezza online, l’utilizzo dell’app è consentito solo tramite un account SPID (Sistema Pubblico di Identità Digitale).
+    card4-title: //ELIMINARE//
+    card4-content: //ELIMINARE//
   spid_information_request:
     headerTitle: Non hai SPID?
     contentTitle: Cos'è SPID?
@@ -130,24 +125,19 @@ authentication:
   spid_information:
     headerTitle: Non hai SPID?
     contentTitle: Cos'è SPID?
-    moreLinkText: Per saperne di più
-    subtitle: SPID è sicuro
-    paragraph1: SPID, il Sistema Pubblico di Identità Digitale, ti permette di accedere
-      a tutti i servizi della Pubblica Amministrazione con un'unica Identità Digitale
-      (username e password).
-    paragraph2-part1: 'SPID ti permette di fare online cose che prima potevi fare
-      solo di persona: per registrarti a SPID dovrai quindi '
-    paragraph2-bold: certificare la tua identità
-    paragraph2-part2: 'completando il riconoscimento presso un Identity Provider.
-      Ecco cosa dovrai fare:'
+    moreLinkText: //ELIMINARE//
+    subtitle: Come registrarsi
+    paragraph1: SPID è il Sistema Pubblico di Identità Digitale, ti permette di accedere in modo sicuro a tutti i servizi della Pubblica Amministrazione con un unico username e password (Identità Digitale).
+    paragraph2-part1: Per registrarti a SPID dovrai prima di tutto scegliere un soggetto con cui certificare la tua identità (Identity Provider). Ecco cosa dovrai fare:
+    
     point1-value: '1'
-    point1-content: "Scegli il tuo \nIdentity Provider"
+    point1-content: Scegli il tuo Identity Provider
     point2-value: '2'
-    point2-content: Inserisci i tuoi dati anagrafici ed il tuo cellulare
+    point2-content: Compila i tuoi dati anagrafici e contatti
     point3-value: '3'
-    point3-content: Carica una copia dei tuoi documenti d'identità
+    point3-content: Allega una copia del tuo documento d’identità
     point4-value: '4'
-    point4-content: "Completa il \nriconoscimento"
+    point4-content: Completa il riconoscimento di persona o online
     knowMore: Puoi saperne di più su spid.gov.it
   idp_selection:
     headerTitle: Home
@@ -167,14 +157,12 @@ onboarding:
     continue: Continua
   pin:
     headerTitle: Attivazione
-    contentTitle: Scegli un codice PIN
-    contentTitleConfirm: Digita ancora il PIN
-    pinInfo: Questo codice ti verrà richiesto ogni volta che aprirai l’app e quando
-      dovrai visualizzare dati sensibili o compiere operazioni dispositive. Deve essere
-      composto di 5 cifre. Ricordalo con attenzione. Potrai cambiarlo in ogni momento
-      entrando con SPID.
-    pinInfoSelected: Questo codice ti verrà richiesto ogni volta che aprirai l’app
-      e quando dovrai visualizzare dati sensibili o compiere operazioni dispositive.
+    contentTitle: Scegli un codice di accesso
+    contentTitleConfirm: Digita ancora il codice di accesso
+    pinInfo: Questo codice di cinque cifre ti permette di aprire l'app, visualizzare dati sensibili e autorizzare pagamenti senza dover ogni volta ripetere l’ingresso con SPID. 
+Potrai cambiare in qualsiasi momento il tuo codice di accesso entrando nuovamente con SPID.
+    pinInfoSelected: Questo codice di cinque cifre ti permette di aprire l'app, visualizzare dati sensibili e autorizzare pagamenti senza dover ogni volta ripetere l’ingresso con SPID. 
+Potrai cambiare in qualsiasi momento il tuo codice di accesso entrando nuovamente con SPID.
     moreLinkText: Per saperne di più.
     continue: Continua
     reset: Modifica il codice
@@ -182,15 +170,15 @@ onboarding:
     confirmInvalid: i due pin non coincidono
 pin_login:
   pin:
-    pinInfo: Inserisci il codice PIN
+    pinInfo: Inserisci il codice codice di accesso
     reset:
-      button: Ho dimenticato il mio PIN
-      button_short: Reimposta PIN
-      tip: Per reimpostare il tuo PIN dovrai accedere nuovamente con la tua identità
+      button: Ho dimenticato il mio codice di accesso
+      button_short: Reimposta codice di accesso
+      tip: Per reimpostare il tuo codice di accesso dovrai accedere nuovamente con la tua identità
         SPID.
       tip_short: Dovrai accedere nuovamente con SPID.
-    confirmValid: PIN corretto
-    confirmInvalid: PIN non valido
+    confirmValid: codice di accesso corretto
+    confirmInvalid: codice di accesso non valido
   unlock_screen:
     help:
       title: hello
@@ -320,7 +308,7 @@ wallet:
   noTransactions: Non ci sono operazioni.
   noNewTransactions: Non ci sono nuove operazioni.
   payNotice: Paga un avviso
-  latestTransactions: Ultime operazioni
+  latestTransactions: Le tue ricevute
   creditDebitCards: Carte di Credito/Debito
   addPaymentMethodTitle: Aggiungi metodo di pagamento
   cancel: Annulla
@@ -406,14 +394,13 @@ notifications:
       un errore
 preferences:
   title: Preferenze
-  subtitle: Queste impostazioni verranno utilizzate da tutti i servizi della Pubblica
-    Amministrazione.
+  subtitle: Qui trovi le tue impostazioni personalizzate per comunicare con la Pubblica Amministrazione.
   moreLinkText: Per saperne di più.
   list:
     email: Indirizzo email
     mobile_phone: Numero di telefono
     services: Elenco dei servizi
-    services_description: Attiva/disattiva i tuoi servizi di IO
+    services_description: Gestisci i servizi disponibili su IO
     language: Lingua
     digitalDomicile: Domicilio digitale
   empty:
